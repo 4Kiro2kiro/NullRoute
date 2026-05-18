@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Misc
+.DS_Store
+*.log
+tree_output.txt
+parse_data.py
+github/

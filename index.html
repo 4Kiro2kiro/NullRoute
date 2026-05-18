@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NullRoute — Guide Interactif Pentest</title>
+  <link rel="stylesheet" href="css/style.css?v=10">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+</head>
+<body>
+
+  <header>
+    <div class="logo">Null<span>Route</span></div>
+
+    <div id="search-container">
+      <input id="search-input" type="text" data-i18n-placeholder="search.placeholder" autocomplete="off" spellcheck="false">
+      <div id="search-results" class="hidden"></div>
+    </div>
+
+    <div id="target-ip-container">
+      <span class="target-ip-label">🎯 TARGET</span>
+      <input id="target-ip-input" type="text" placeholder="10.10.10.10" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="header-actions">
+      <button class="header-btn" onclick="goBack()" data-i18n="btn.back" data-i18n-title="btn.back">← Retour</button>
+      <button class="header-btn" onclick="goHome()" data-i18n="btn.home" data-i18n-title="btn.home">🏠 Départ</button>
+      <button class="header-btn" onclick="toggleMap()" data-i18n="btn.map">🗺️ Carte</button>
+      <button class="header-btn docs-btn" onclick="toggleDocs()" data-i18n="btn.docs">📚 Docs</button>
+      <button class="header-btn gtfo-btn" onclick="toggleGTFO()" data-i18n="btn.gtfobins">🐧 GTFOBins</button>
+      <button class="header-btn lolbas-btn" onclick="toggleLOLBAS()" data-i18n="btn.lolbas">🪟 LOLBAS</button>
+      <button class="header-btn payloads-btn" onclick="togglePayloads()" data-i18n="btn.payloads">💥 Payloads</button>
+
+      <div class="lang-toggle">
+        <button id="lang-fr" class="lang-btn active" onclick="setLang('fr')">FR</button>
+        <button id="lang-en" class="lang-btn" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="breadcrumb-bar">
+    <div id="breadcrumb"></div>
+  </div>
+
+  <div id="app">
+    <div id="main-content"></div>
+  </div>
+
+  <!-- ── Map Overlay ─────────────────────────────────────────────────────── -->
+  <div id="map-overlay" class="hidden">
+    <div id="map-panel">
+      <button id="map-close" onclick="toggleMap()" data-i18n="map.close">✕ Fermer</button>
+      <h2 data-i18n="map.title">🗺️ Carte complète — Tous les nœuds</h2>
+      <div id="map-content"></div>
+    </div>
+  </div>
+
+  <!-- ── Docs Panel ──────────────────────────────────────────────────────── -->
+  <div id="docs-overlay" class="hidden" onclick="closeDocs()"></div>
+  <div id="docs-panel">
+    <div class="docs-header">
+      <div class="docs-header-top">
+        <div class="docs-title" data-i18n="docs.title">📚 Glossaire NullRoute / Pentest</div>
+        <button class="docs-close" onclick="closeDocs()" data-i18n="docs.close">✕ Fermer</button>
+      </div>
+      <input id="docs-search" type="text" data-i18n-placeholder="docs.search"
+        placeholder="Rechercher un terme…" oninput="docsSearch(this.value)" autocomplete="off" spellcheck="false">
+      <div class="docs-cats">
+        <button class="docs-cat-btn" data-cat="web" onclick="docsCatFilter('web')">🌐 Web</button>
+        <button class="docs-cat-btn" data-cat="exploit" onclick="docsCatFilter('exploit')">💥 Exploit</button>
+        <button class="docs-cat-btn" data-cat="network" onclick="docsCatFilter('network')">🔌 Réseau</button>
+        <button class="docs-cat-btn" data-cat="privesc" onclick="docsCatFilter('privesc')">⬆️ PrivEsc</button>
+        <button class="docs-cat-btn" data-cat="tool" onclick="docsCatFilter('tool')">🔧 Outils</button>
+        <button class="docs-cat-btn" data-cat="ctf" onclick="docsCatFilter('ctf')">🎯 CTF</button>
+        <button class="docs-cat-btn" data-cat="general" onclick="docsCatFilter('general')">📖 Général</button>
+      </div>
+    </div>
+    <div class="docs-body">
+      <div id="docs-list"></div>
+      <div id="docs-detail"></div>
+    </div>
+  </div>
+
+  <!-- ── GTFOBins Panel ──────────────────────────────────────────────────── -->
+  <div id="gtfo-overlay" class="hidden" onclick="closeGTFO()"></div>
+  <div id="gtfo-panel">
+    <div class="side-panel-header">
+      <div>
+        <div class="side-panel-title" data-i18n="gtfo.title">🐧 GTFOBins — Escalade Linux</div>
+        <div class="side-panel-sub" data-i18n="gtfo.subtitle">478 binaires Linux exploitables</div>
+      </div>
+      <button class="docs-close" onclick="closeGTFO()" data-i18n="gtfo.close">✕ Fermer</button>
+    </div>
+    <input id="gtfo-search" type="text" data-i18n-placeholder="gtfo.search"
+      placeholder="Rechercher un binaire…" oninput="renderGTFOList(this.value)" autocomplete="off" spellcheck="false">
+    <div class="side-panel-body">
+      <div id="gtfo-list" class="side-list"></div>
+      <div id="gtfo-detail" class="side-detail"></div>
+    </div>
+  </div>
+
+  <!-- ── LOLBAS Panel ────────────────────────────────────────────────────── -->
+  <div id="lolbas-overlay" class="hidden" onclick="closeLOLBAS()"></div>
+  <div id="lolbas-panel">
+    <div class="side-panel-header">
+      <div>
+        <div class="side-panel-title" data-i18n="lolbas.title">🪟 LOLBAS — Windows</div>
+        <div class="side-panel-sub" data-i18n="lolbas.subtitle">235 binaires Windows légitimes</div>
+      </div>
+      <button class="docs-close" onclick="closeLOLBAS()" data-i18n="lolbas.close">✕ Fermer</button>
+    </div>
+    <input id="lolbas-search" type="text" data-i18n-placeholder="lolbas.search"
+      placeholder="Rechercher un binaire…" oninput="renderLOLBASList(this.value)" autocomplete="off" spellcheck="false">
+    <div class="side-panel-body">
+      <div id="lolbas-list" class="side-list"></div>
+      <div id="lolbas-detail" class="side-detail"></div>
+    </div>
+  </div>
+
+  <!-- ── Payloads Panel ─────────────────────────────────────────────────── -->
+  <div id="payloads-overlay" class="hidden" onclick="closePayloads()"></div>
+  <div id="payloads-panel">
+    <div class="side-panel-header">
+      <div>
+        <div class="side-panel-title" data-i18n="payloads.title">💥 Payloads</div>
+        <div class="side-panel-sub" data-i18n="payloads.subtitle">PayloadsAllTheThings</div>
+      </div>
+      <button class="docs-close" onclick="closePayloads()" data-i18n="payloads.close">✕ Fermer</button>
+    </div>
+    <input id="payloads-search" type="text" data-i18n-placeholder="payloads.search"
+      placeholder="Rechercher une vuln…" oninput="renderPayloadsList(this.value)" autocomplete="off" spellcheck="false">
+    <div class="side-panel-body">
+      <div id="payloads-list" class="side-list"></div>
+      <div id="payloads-detail" class="side-detail"></div>
+    </div>
+  </div>
+
+  <!-- ── Scripts ────────────────────────────────────────────────────────── -->
+  <script src="js/i18n.js?v=10"></script>
+  <script src="js/data.js?v=10"></script>
+  <script src="js/data_extra.js?v=10"></script>
+  <script src="js/data_ctf_techniques.js?v=10"></script>
+  <script src="js/data_methodology.js?v=10"></script>
+  <script src="js/data_cheatsheets.js?v=10"></script>
+  <script src="js/data_advanced.js?v=10"></script>
+  <script src="js/data_macos_web3.js?v=10"></script>
+  <script src="js/gtfobins.js?v=10"></script>
+  <script src="js/lolbas.js?v=10"></script>
+  <script src="js/payloads.js?v=10"></script>
+  <script src="js/docs.js?v=10"></script>
+  <script src="js/app.js?v=10"></script>
+  <script src="js/panels.js?v=10"></script>
+</body>
+</html>

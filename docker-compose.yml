@@ -1,0 +1,9 @@
+services:
+  nullroute:
+    build: .
+    container_name: nullroute
+    ports:
+      - "8888:8888"
+    restart: always
+    volumes:
+      - ./:/usr/share/nginx/html:ro
