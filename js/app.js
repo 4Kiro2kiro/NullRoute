@@ -191,7 +191,7 @@ function highlightCmd(cmd) {
 function copyAllCommands(nodeId) {
   const node = NODES[nodeId];
   if (!node || !node.commands || node.commands.length === 0) return;
-  const text = node.commands.map(c => applyTargetIp(c.cmd)).join("\n\n");
+  const text = node.commands.map(c => applyTargetIp((LANG === "en" && c.cmd_en) ? c.cmd_en : c.cmd)).join("\n\n");
   navigator.clipboard.writeText(text).then(() => {
     showToast(t("toast.copyall"));
   }).catch(() => {
@@ -244,15 +244,17 @@ function renderNode(nodeId) {
           <h3><span class="section-icon">⚡</span> ${t("section.commands").replace("⚡ ","")}</h3>
           <button class="copy-all-btn" onclick="copyAllCommands('${nodeId}')">${t("node.copyall")}</button>
         </div>
-        ${node.commands.map((c, i) => `
+        ${node.commands.map((c, i) => {
+          const cmdText = (LANG === "en" && c.cmd_en) ? c.cmd_en : c.cmd;
+          return `
           <div class="command-block">
             <div class="command-label">${escHtml(LANG === "en" && c.label_en ? c.label_en : c.label)}</div>
             <div class="command-code-wrap">
-              <pre class="command-code">${highlightTargetIp(highlightCmd(c.cmd))}</pre>
-              <button class="copy-btn" data-copy="${encodeURIComponent(applyTargetIp(c.cmd))}" onclick="copyFromData(this)" title="Copy">${COPY_SVG}</button>
+              <pre class="command-code">${highlightTargetIp(highlightCmd(cmdText))}</pre>
+              <button class="copy-btn" data-copy="${encodeURIComponent(applyTargetIp(cmdText))}" onclick="copyFromData(this)" title="Copy">${COPY_SVG}</button>
             </div>
-          </div>
-        `).join("")}
+          </div>`;
+        }).join("")}
       </div>`;
   }
 

