@@ -799,9 +799,10 @@ function renderDocList() {
 
   const filtered = GLOSSARY.filter(t => {
     const matchCat = !cat || t.category === cat;
+    const def = (LANG === "en" && t.definition_en) ? t.definition_en : t.definition;
     const matchQ = !q || t.name.toLowerCase().includes(q) ||
       t.fullName.toLowerCase().includes(q) ||
-      t.definition.toLowerCase().includes(q) ||
+      def.toLowerCase().includes(q) ||
       (t.aliases || []).some(a => a.toLowerCase().includes(q));
     return matchCat && matchQ;
   });

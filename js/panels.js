@@ -72,7 +72,7 @@ function closeGTFO() {
 
 function renderGTFOList(query) {
   if (typeof GTFOBINS === "undefined") {
-    document.getElementById("gtfo-list").innerHTML = '<div class="panel-loading">Chargement GTFOBins…</div>';
+    document.getElementById("gtfo-list").innerHTML = `<div class="panel-loading">${t("panel.loading")}</div>`;
     return;
   }
   const q = query.toLowerCase().trim();
@@ -174,7 +174,7 @@ function closeLOLBAS() {
 
 function renderLOLBASList(query) {
   if (typeof LOLBAS === "undefined") {
-    document.getElementById("lolbas-list").innerHTML = '<div class="panel-loading">Chargement LOLBAS…</div>';
+    document.getElementById("lolbas-list").innerHTML = `<div class="panel-loading">${t("panel.loading")}</div>`;
     return;
   }
   const q = query.toLowerCase().trim();
@@ -266,7 +266,7 @@ function closePayloads() {
 
 function renderPayloadsList(query) {
   if (typeof PAYLOADS === "undefined") {
-    document.getElementById("payloads-list").innerHTML = '<div class="panel-loading">Chargement Payloads…</div>';
+    document.getElementById("payloads-list").innerHTML = `<div class="panel-loading">${t("panel.loading")}</div>`;
     return;
   }
   const q = query.toLowerCase().trim();

@@ -11,9 +11,23 @@ function setLang(l) {
   if (typeof renderNode === "function") renderNode(currentNodeId);
   if (typeof updateBreadcrumb === "function") updateBreadcrumb();
   if (typeof renderDocList === "function") renderDocList();
+  if (typeof renderDocDetail === "function" && typeof docsCurrentId !== "undefined") renderDocDetail(docsCurrentId);
   if (typeof renderMap === "function") {
     const mapOverlay = document.getElementById("map-overlay");
     if (mapOverlay && !mapOverlay.classList.contains("hidden")) renderMap();
+  }
+  if (typeof renderFavorites === "function") {
+    const favOverlay = document.getElementById("fav-overlay");
+    if (favOverlay && !favOverlay.classList.contains("hidden")) renderFavorites();
+  }
+  if (typeof renderGTFOList === "function" && document.getElementById("gtfo-panel")?.classList.contains("open")) {
+    renderGTFOList(document.getElementById("gtfo-search")?.value || "");
+  }
+  if (typeof renderLOLBASList === "function" && document.getElementById("lolbas-panel")?.classList.contains("open")) {
+    renderLOLBASList(document.getElementById("lolbas-search")?.value || "");
+  }
+  if (typeof renderPayloadsList === "function" && document.getElementById("payloads-panel")?.classList.contains("open")) {
+    renderPayloadsList(document.getElementById("payloads-search")?.value || "");
   }
   applyLang();
 }
@@ -136,6 +150,13 @@ const I18N = {
     "toast.notfound": "Nœud non trouvé :",
     "copy.btn": "⎘",
     "search.noresult": "Aucun résultat pour",
+    "panel.loading": "Chargement…",
+    "shortcut.search": "Recherche globale",
+    "shortcut.back": "Retour",
+    "shortcut.close": "Fermer les panneaux",
+    "shortcut.shortcuts": "Afficher les raccourcis",
+    "shortcut.fav": "Marquer en favori",
+    "shortcut.done": "Marquer comme fait",
   },
   en: {
     // Header
@@ -237,5 +258,12 @@ const I18N = {
     "toast.notfound": "Node not found:",
     "copy.btn": "⎘",
     "search.noresult": "No results for",
+    "panel.loading": "Loading…",
+    "shortcut.search": "Global search",
+    "shortcut.back": "Go back",
+    "shortcut.close": "Close panels",
+    "shortcut.shortcuts": "Show shortcuts",
+    "shortcut.fav": "Bookmark a node",
+    "shortcut.done": "Mark as done",
   }
 };
