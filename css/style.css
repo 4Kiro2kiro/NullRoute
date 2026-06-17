@@ -1132,6 +1132,318 @@ header {
 }
 
 
+/* ─── Node Actions (Fav + Done buttons) ─────────────────────────────────── */
+.node-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.node-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.action-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  line-height: 1;
+}
+.action-btn:hover { background: rgba(255,255,255,0.1); border-color: #777; transform: scale(1.1); }
+.fav-node-btn.active  { border-color: #f9c74f; color: #f9c74f; background: rgba(249,199,79,0.1); }
+.done-node-btn.active { border-color: var(--green); color: var(--green); background: rgba(63,185,80,0.1); font-weight: 700; }
+
+/* ─── Section header (commands h3 + copy-all btn) ───────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.section-header h3 { margin-bottom: 0; }
+
+.copy-all-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  letter-spacing: 0.3px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.copy-all-btn:hover { background: var(--border); color: var(--cyan); border-color: var(--cyan); }
+
+/* ─── Recent Nodes ───────────────────────────────────────────────────────── */
+.recent-section { background: rgba(255,255,255,0.01); }
+
+.recent-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recent-item {
+  background: var(--bg3);
+  border: 1px solid;
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 7px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: filter 0.15s, transform 0.1s;
+  position: relative;
+}
+.recent-item:hover { filter: brightness(1.3); transform: translateY(-1px); }
+
+.done-badge {
+  background: var(--green);
+  color: #000;
+  font-size: 9px;
+  font-weight: 800;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ─── Map Progress Bar ───────────────────────────────────────────────────── */
+.map-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+}
+.map-progress-count {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  flex-shrink: 0;
+}
+.map-progress-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.map-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.map-progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+/* Map node done/fav indicators */
+.map-node-btn.done {
+  border-style: solid;
+  opacity: 0.9;
+}
+.map-node-btn.done::after {
+  content: " ✓";
+  color: var(--green);
+  font-weight: 700;
+  font-size: 10px;
+}
+.map-node-btn.fav::before {
+  content: "⭐ ";
+  font-size: 9px;
+}
+.map-done-check {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 10px;
+  margin-right: 2px;
+}
+
+/* ─── Favorites Overlay ──────────────────────────────────────────────────── */
+#fav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+}
+#fav-overlay.hidden { display: none; }
+
+#fav-panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.fav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg2);
+  z-index: 1;
+}
+.fav-title { font-size: 16px; font-weight: 700; color: #f9c74f; }
+
+#fav-content { padding: 16px 20px; }
+
+.fav-empty {
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+  padding: 40px 20px;
+  line-height: 1.8;
+}
+
+.fav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.fav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid;
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 13px;
+  transition: filter 0.15s, transform 0.1s;
+}
+.fav-item:hover { filter: brightness(1.3); transform: translateY(-1px); }
+.fav-item-icon { font-size: 18px; flex-shrink: 0; }
+.fav-item-title { flex: 1; font-weight: 600; line-height: 1.3; }
+.fav-item-cat { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+
+/* ─── Favorites header button ────────────────────────────────────────────── */
+.fav-hdr-btn {
+  background: linear-gradient(135deg, #2a1f00, #3a2a00) !important;
+  border-color: #f9c74f !important;
+  color: #f9c74f !important;
+  font-weight: 600;
+}
+.fav-hdr-btn:hover { filter: brightness(1.2); }
+
+.shortcuts-hdr-btn {
+  background: var(--bg3) !important;
+  border-color: var(--border) !important;
+  color: var(--text-muted) !important;
+  font-size: 16px !important;
+  padding: 5px 10px !important;
+}
+.shortcuts-hdr-btn:hover { border-color: var(--cyan) !important; color: var(--cyan) !important; }
+
+/* ─── Keyboard Shortcuts Overlay ─────────────────────────────────────────── */
+#shortcuts-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#shortcuts-overlay.hidden { display: none; }
+
+.shortcuts-panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  width: 420px;
+  max-width: 95vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.shortcuts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.shortcuts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.shortcut-row span { flex: 1; }
+kbd {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid #444;
+  border-radius: 5px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  white-space: nowrap;
+}
+
+/* ─── Node card entrance animation ──────────────────────────────────────── */
+.node-card {
+  animation: cardIn 0.2s ease-out;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   #gtfo-panel, #lolbas-panel, #payloads-panel { width: 100vw; }

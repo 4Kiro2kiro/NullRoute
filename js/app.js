@@ -1,6 +1,119 @@
 // ─── State ────────────────────────────────────────────────────────────────────
 
-let targetIp = localStorage.getItem("nullroute_target_ip") || "";
+let targetIp    = localStorage.getItem("nullroute_target_ip") || "";
+let favorites   = [];
+let doneNodes   = new Set();
+let recentNodes = [];
+
+// ─── Favorites ────────────────────────────────────────────────────────────────
+
+function isFavorite(id) { return favorites.includes(id); }
+
+function toggleFavorite(id) {
+  if (isFavorite(id)) {
+    favorites = favorites.filter(f => f !== id);
+  } else {
+    favorites.unshift(id);
+  }
+  saveFavorites();
+  renderNode(currentNodeId);
+}
+
+function saveFavorites() {
+  try { localStorage.setItem("nullroute_favorites", JSON.stringify(favorites)); } catch(e) {}
+}
+
+function loadFavorites() {
+  try {
+    const raw = localStorage.getItem("nullroute_favorites");
+    if (raw) favorites = JSON.parse(raw);
+  } catch(e) {}
+}
+
+function renderFavorites() {
+  const el = document.getElementById("fav-content");
+  if (!el) return;
+  if (favorites.length === 0) {
+    el.innerHTML = `<div class="fav-empty">${t("fav.empty")}</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="fav-grid">${
+    favorites.map(id => {
+      const n = NODES[id];
+      if (!n) return "";
+      const style = getCategoryStyle(n.category);
+      const title = (LANG === "en" && n.title_en) ? n.title_en : n.title;
+      return `<button class="fav-item" style="border-color:${style.border}" onclick="selectFav('${id}')">
+        <span class="fav-item-icon">${n.icon || ""}</span>
+        <span class="fav-item-title">${escHtml(title)}</span>
+        <span class="fav-item-cat" style="color:${style.badge}">${n.category}</span>
+      </button>`;
+    }).join("")
+  }</div>`;
+}
+
+function selectFav(id) {
+  const n = NODES[id];
+  if (!n) return;
+  toggleFavPanel();
+  const title = (LANG === "en" && n.title_en) ? n.title_en : n.title;
+  goTo(id, title);
+}
+
+function toggleFavPanel() {
+  const overlay = document.getElementById("fav-overlay");
+  if (!overlay) return;
+  if (overlay.classList.contains("hidden")) {
+    renderFavorites();
+    overlay.classList.remove("hidden");
+  } else {
+    overlay.classList.add("hidden");
+  }
+}
+
+// ─── Done Nodes ───────────────────────────────────────────────────────────────
+
+function isDone(id) { return doneNodes.has(id); }
+
+function toggleDone(id) {
+  if (isDone(id)) {
+    doneNodes.delete(id);
+  } else {
+    doneNodes.add(id);
+  }
+  saveDoneNodes();
+  renderNode(currentNodeId);
+}
+
+function saveDoneNodes() {
+  try { localStorage.setItem("nullroute_done", JSON.stringify([...doneNodes])); } catch(e) {}
+}
+
+function loadDoneNodes() {
+  try {
+    const raw = localStorage.getItem("nullroute_done");
+    if (raw) doneNodes = new Set(JSON.parse(raw));
+  } catch(e) {}
+}
+
+// ─── Recent Nodes ─────────────────────────────────────────────────────────────
+
+function addRecent(id) {
+  if (id === "start") return;
+  recentNodes = [id, ...recentNodes.filter(r => r !== id)].slice(0, 8);
+  saveRecent();
+}
+
+function saveRecent() {
+  try { localStorage.setItem("nullroute_recent", JSON.stringify(recentNodes)); } catch(e) {}
+}
+
+function loadRecent() {
+  try {
+    const raw = localStorage.getItem("nullroute_recent");
+    if (raw) recentNodes = JSON.parse(raw);
+  } catch(e) {}
+}
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
@@ -13,6 +126,7 @@ function goTo(nodeId, choiceLabel) {
     history.push({ nodeId: currentNodeId, choiceLabel });
   }
   currentNodeId = nodeId;
+  addRecent(nodeId);
   renderNode(nodeId);
   updateBreadcrumb();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -40,7 +154,7 @@ function goHome() {
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
-const COPY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+const COPY_SVG  = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
 const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 
 // ─── Target IP ────────────────────────────────────────────────────────────────
@@ -72,6 +186,25 @@ function highlightCmd(cmd) {
   }).join('\n');
 }
 
+// ─── Copy All Commands ────────────────────────────────────────────────────────
+
+function copyAllCommands(nodeId) {
+  const node = NODES[nodeId];
+  if (!node || !node.commands || node.commands.length === 0) return;
+  const text = node.commands.map(c => applyTargetIp(c.cmd)).join("\n\n");
+  navigator.clipboard.writeText(text).then(() => {
+    showToast(t("toast.copyall"));
+  }).catch(() => {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    showToast(t("toast.copyall"));
+  });
+}
+
 // ─── Render ───────────────────────────────────────────────────────────────────
 
 const CATEGORY_COLORS = {
@@ -100,17 +233,23 @@ function renderNode(nodeId) {
   const nodeLookfor = LANG === "en" && node.lookfor_en      ? node.lookfor_en      : (node.lookfor || []);
   const nodeTips    = LANG === "en" && node.tips_en         ? node.tips_en         : (node.tips    || []);
 
+  const favActive  = isFavorite(nodeId);
+  const doneActive = isDone(nodeId);
+
   let commandsHtml = "";
   if (node.commands && node.commands.length > 0) {
     commandsHtml = `
       <div class="section">
-        <h3><span class="section-icon">⚡</span> ${t("section.commands").replace("⚡ ","")}</h3>
+        <div class="section-header">
+          <h3><span class="section-icon">⚡</span> ${t("section.commands").replace("⚡ ","")}</h3>
+          <button class="copy-all-btn" onclick="copyAllCommands('${nodeId}')">${t("node.copyall")}</button>
+        </div>
         ${node.commands.map((c, i) => `
           <div class="command-block">
             <div class="command-label">${escHtml(LANG === "en" && c.label_en ? c.label_en : c.label)}</div>
             <div class="command-code-wrap">
               <pre class="command-code">${highlightTargetIp(highlightCmd(c.cmd))}</pre>
-              <button class="copy-btn" data-copy="${encodeURIComponent(applyTargetIp(c.cmd))}" onclick="copyFromData(this)" title="Copier">${COPY_SVG}</button>
+              <button class="copy-btn" data-copy="${encodeURIComponent(applyTargetIp(c.cmd))}" onclick="copyFromData(this)" title="Copy">${COPY_SVG}</button>
             </div>
           </div>
         `).join("")}
@@ -133,6 +272,27 @@ function renderNode(nodeId) {
         <h3><span class="section-icon">💡</span> ${t("section.tips").replace("💡 ","")}</h3>
         <ul>${nodeTips.map(tp => `<li>${escHtml(tp)}</li>`).join("")}</ul>
       </div>`;
+  }
+
+  let recentHtml = "";
+  if (nodeId === "start" && recentNodes.length > 0) {
+    const recentItems = recentNodes.map(id => NODES[id]).filter(Boolean).slice(0, 6);
+    if (recentItems.length > 0) {
+      recentHtml = `
+        <div class="section recent-section">
+          <h3><span class="section-icon">🕐</span> ${t("recent.title")}</h3>
+          <div class="recent-grid">
+            ${recentItems.map(n => {
+              const rStyle = getCategoryStyle(n.category);
+              const rTitle = (LANG === "en" && n.title_en) ? n.title_en : n.title;
+              return `<button class="recent-item" style="border-color:${rStyle.border}" onclick="goTo('${n.id}', '${escHtml(rTitle)}')">
+                ${n.icon || ""} ${escHtml(rTitle)}
+                ${isDone(n.id) ? '<span class="done-badge">✓</span>' : ''}
+              </button>`;
+            }).join("")}
+          </div>
+        </div>`;
+    }
   }
 
   let choicesHtml = "";
@@ -160,11 +320,24 @@ function renderNode(nodeId) {
           <span class="category-badge" style="background:${style.badge}">${node.category.toUpperCase()}</span>
           <span class="node-icon-title">${node.icon || ""} ${escHtml(nodeTitle)}</span>
         </div>
+        <div class="node-actions">
+          <button class="action-btn fav-node-btn${favActive ? ' active' : ''}"
+            onclick="toggleFavorite('${nodeId}')"
+            title="${favActive ? t('fav.remove') : t('fav.add')}">
+            ${favActive ? '⭐' : '☆'}
+          </button>
+          <button class="action-btn done-node-btn${doneActive ? ' active' : ''}"
+            onclick="toggleDone('${nodeId}')"
+            title="${doneActive ? t('done.unmark') : t('done.mark')}">
+            ${doneActive ? '✓' : '○'}
+          </button>
+        </div>
       </div>
       <div class="node-description">${escHtml(nodeDesc)}</div>
       ${commandsHtml}
       ${lookforHtml}
       ${tipsHtml}
+      ${recentHtml}
       ${choicesHtml}
       ${typeof renderRelatedTerms === "function" ? renderRelatedTerms(node) : ""}
     </div>`;
@@ -206,21 +379,29 @@ function searchNodes(query) {
   }
   const results = Object.values(NODES).filter(n => {
     return n.title.toLowerCase().includes(q) ||
+      (n.title_en && n.title_en.toLowerCase().includes(q)) ||
       n.description.toLowerCase().includes(q) ||
-      (n.commands || []).some(c => c.cmd.toLowerCase().includes(q) || c.label.toLowerCase().includes(q)) ||
-      (n.tips || []).some(t => t.toLowerCase().includes(q)) ||
+      (n.description_en && n.description_en.toLowerCase().includes(q)) ||
+      (n.commands || []).some(c =>
+        c.cmd.toLowerCase().includes(q) ||
+        c.label.toLowerCase().includes(q) ||
+        (c.label_en && c.label_en.toLowerCase().includes(q))
+      ) ||
+      (n.tips || []).some(tip => tip.toLowerCase().includes(q)) ||
+      (n.tips_en || []).some(tip => tip.toLowerCase().includes(q)) ||
       n.category.toLowerCase().includes(q);
   });
   const panel = document.getElementById("search-results");
   if (results.length === 0) {
-    panel.innerHTML = `<div class="no-results">Aucun résultat pour "${escHtml(query)}"</div>`;
+    panel.innerHTML = `<div class="no-results">${t("search.noresult")} "${escHtml(query)}"</div>`;
   } else {
     panel.innerHTML = results.map(n => {
       const style = getCategoryStyle(n.category);
+      const title = (LANG === "en" && n.title_en) ? n.title_en : n.title;
       return `<div class="search-item" onclick="selectSearch('${n.id}')">
         <span class="search-badge" style="background:${style.badge}">${n.category}</span>
         <span class="search-icon">${n.icon || ""}</span>
-        <span class="search-title">${escHtml(n.title)}</span>
+        <span class="search-title">${escHtml(title)}</span>
       </div>`;
     }).join("");
   }
@@ -230,7 +411,9 @@ function searchNodes(query) {
 function selectSearch(nodeId) {
   document.getElementById("search-input").value = "";
   document.getElementById("search-results").classList.add("hidden");
-  goTo(nodeId, NODES[nodeId]?.title || nodeId);
+  const n = NODES[nodeId];
+  const title = n ? ((LANG === "en" && n.title_en) ? n.title_en : n.title) : nodeId;
+  goTo(nodeId, title);
 }
 
 // ─── Clipboard ────────────────────────────────────────────────────────────────
@@ -242,7 +425,6 @@ function copyFromData(btn) {
     btn.classList.add("copied");
     setTimeout(() => { btn.innerHTML = COPY_SVG; btn.classList.remove("copied"); }, 1500);
   }).catch(() => {
-    // fallback for file:// context
     const ta = document.createElement("textarea");
     ta.value = text;
     document.body.appendChild(ta);
@@ -262,11 +444,11 @@ function copyCmd(btn, cmdIndex, nodeId) {
 }
 
 function showToast(msg) {
-  const t = document.createElement("div");
-  t.className = "toast";
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2500);
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2500);
 }
 
 // ─── Persistence ──────────────────────────────────────────────────────────────
@@ -309,7 +491,17 @@ function renderMap() {
     if (!categories[n.category]) categories[n.category] = [];
     categories[n.category].push(n);
   });
-  container.innerHTML = Object.entries(categories).map(([cat, nodes]) => {
+
+  const total = Object.keys(NODES).length;
+  const done  = [...doneNodes].filter(id => NODES[id]).length;
+
+  const progressHtml = `<div class="map-progress">
+    <span class="map-progress-count">${done} / ${total}</span>
+    <span class="map-progress-label">${t("map.progress")}</span>
+    <div class="map-progress-bar"><div class="map-progress-fill" style="width:${Math.round(done/total*100)}%"></div></div>
+  </div>`;
+
+  container.innerHTML = progressHtml + Object.entries(categories).map(([cat, nodes]) => {
     const style = getCategoryStyle(cat);
     const catLabel = t("map.cat." + cat) || cat.toUpperCase();
     return `<div class="map-category">
@@ -317,7 +509,10 @@ function renderMap() {
       <div class="map-nodes">
         ${nodes.map(n => {
           const title = (LANG === "en" && n.title_en) ? n.title_en : n.title;
-          return `<button class="map-node-btn" style="border-color:${style.border}" onclick="selectMapNode('${n.id}')">
+          const doneCls = isDone(n.id) ? " done" : "";
+          const favCls  = isFavorite(n.id) ? " fav" : "";
+          return `<button class="map-node-btn${doneCls}${favCls}" style="border-color:${style.border}" onclick="selectMapNode('${n.id}')">
+            ${isDone(n.id) ? '<span class="map-done-check">✓</span>' : ''}
             ${n.icon || ""} ${escHtml(title)}
           </button>`;
         }).join("")}
@@ -328,7 +523,21 @@ function renderMap() {
 
 function selectMapNode(nodeId) {
   document.getElementById("map-overlay").classList.add("hidden");
-  goTo(nodeId, NODES[nodeId]?.title || nodeId);
+  const n = NODES[nodeId];
+  const title = n ? ((LANG === "en" && n.title_en) ? n.title_en : n.title) : nodeId;
+  goTo(nodeId, title);
+}
+
+// ─── Shortcuts Overlay ────────────────────────────────────────────────────────
+
+function showShortcuts() {
+  const overlay = document.getElementById("shortcuts-overlay");
+  if (overlay) overlay.classList.remove("hidden");
+}
+
+function hideShortcuts() {
+  const overlay = document.getElementById("shortcuts-overlay");
+  if (overlay) overlay.classList.add("hidden");
 }
 
 // ─── Utils ────────────────────────────────────────────────────────────────────
@@ -344,6 +553,9 @@ function escHtml(str) {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {
+  loadFavorites();
+  loadDoneNodes();
+  loadRecent();
   loadState();
   renderNode(currentNodeId);
   updateBreadcrumb();
@@ -371,16 +583,29 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!e.target.closest("#search-container")) {
       document.getElementById("search-results").classList.add("hidden");
     }
+    if (!e.target.closest("#fav-overlay") && !e.target.closest("[onclick*='toggleFavPanel']")) {
+      const favOverlay = document.getElementById("fav-overlay");
+      if (favOverlay && !favOverlay.classList.contains("hidden")) {
+        favOverlay.classList.add("hidden");
+      }
+    }
   });
 
   document.addEventListener("keydown", e => {
-    if (e.key === "Backspace" && !e.target.matches("input, textarea")) goBack();
+    const inInput = e.target.matches("input, textarea");
+    if (e.key === "Backspace" && !inInput) goBack();
     if ((e.ctrlKey || e.metaKey) && e.key === "k") {
       e.preventDefault();
       searchInput.focus();
     }
+    if (e.key === "?" && !inInput) {
+      e.preventDefault();
+      showShortcuts();
+    }
     if (e.key === "Escape") {
       document.getElementById("map-overlay").classList.add("hidden");
+      document.getElementById("fav-overlay")?.classList.add("hidden");
+      hideShortcuts();
       if (typeof closeDocs === "function") closeDocs();
     }
   });
@@ -399,11 +624,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (en) en.classList.toggle("active", LANG === "en");
   }
 
-  // Keyboard: close panels on Escape
+  // Keyboard: close side panels on Escape
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") {
-      if (typeof closeGTFO === "function" && document.getElementById("gtfo-panel")?.classList.contains("open")) closeGTFO();
-      else if (typeof closeLOLBAS === "function" && document.getElementById("lolbas-panel")?.classList.contains("open")) closeLOLBAS();
+      if (typeof closeGTFO    === "function" && document.getElementById("gtfo-panel")?.classList.contains("open"))    closeGTFO();
+      else if (typeof closeLOLBAS  === "function" && document.getElementById("lolbas-panel")?.classList.contains("open"))  closeLOLBAS();
       else if (typeof closePayloads === "function" && document.getElementById("payloads-panel")?.classList.contains("open")) closePayloads();
     }
   });

